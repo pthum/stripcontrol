@@ -4,14 +4,7 @@
     <h4 align="center" v-if="typeof id !== 'undefined'">
       Edit Profile {{ id }}
 
-      <q-btn
-        @click="removeModal = true"
-        color="negative"
-        v-if="typeof id !== 'undefined'"
-        icon="delete"
-        size="lg"
-        flat
-      ></q-btn>
+    <remove-modal :removalText="`Really Remove Profile  ${id} ?`" :deleteEntry="deleteEntry" />
     </h4>
     <h4 align="center" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
@@ -76,34 +69,6 @@
               <q-btn color="positive" type="submit" v-else icon="add-box"
                 >Create</q-btn
               >
-            <q-dialog
-              id="modal-remove-colorprofile"
-              v-model="removeModal"
-              header-bg-variant="dark"
-              header-text-variant="danger"
-              title="Remove profile?"
-            >
-              <q-card>
-                <q-card-section> <q-avatar icon="warning"></q-avatar>
-                    Really remove profile &quot;{{ id }}&quot; ?
-                </q-card-section>
-                <q-separator></q-separator>
-                <q-card-actions align="right">
-                  <q-btn
-                    flat
-                    label="Cancel"
-                    color="primary"
-                    v-close-popup
-                  ></q-btn>
-                  <q-btn
-                    label="Remove!"
-                    color="negative"
-                    v-close-popup
-                    @click="deleteEntry"
-                  ></q-btn>
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
           </div>
         </div>
       </q-form>
@@ -115,14 +80,13 @@
 import colorhelper from "./colorhelper";
 import ApiManager from "./api-manager";
 import { mapMutations, mapGetters } from "vuex";
+import RemoveModal from "./removeModal"
 
 export default {
   name: "color-form",
   props: ["formProfileName"],
-  data() {
-    return {
-      removeModal: false,
-    };
+  components: {
+    RemoveModal
   },
   computed: {
     red() {

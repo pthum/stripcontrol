@@ -35,7 +35,7 @@ import ApiManager from "@/components/api-manager";
 import ledstripform from "@/components/ledstrip-form";
 import ledstripselect from "@/components/ledstrip-select";
 import EventBus from "@/components/eventbus";
-import { Ui, EventType } from "@/components/constant-contig";
+import { Ui, EventType } from "@/components/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {

@@ -28,7 +28,6 @@
                 <q-btn
                   :icon="strip.enabled ? 'light_mode' : 'lightbulb'"
                   :color="strip.enabled ? 'yellow-5' : 'dark'"
-                  :variant="getVariantEnabled(strip)"
                   @click="toggleEnabled(strip)"
                 />
               </q-btn-group>
@@ -44,7 +43,7 @@
 import colorprofileselect from "./colorprofile-select";
 import ApiManager from "./api-manager";
 import EventBus from "./eventbus";
-import { Ui, EventType } from "./constant-contig";
+import { Ui, EventType } from "./constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
@@ -69,10 +68,6 @@ export default {
     toggleEnabled(strip) {
       strip.enabled = !strip.enabled;
       ApiManager.updateLedStrip(this, strip);
-    },
-    /** return the ui variant of a strip */
-    getVariantEnabled(strip) {
-      return Ui.getVariant(strip.enabled);
     },
     /** handle selection of a color profile */
     handleCPSelect(event) {

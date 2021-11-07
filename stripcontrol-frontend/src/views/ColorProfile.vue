@@ -38,7 +38,7 @@ import ApiManager from "@/components/api-manager";
 import colorprofileform from "@/components/colorprofile-form";
 import colorprofileselect from "@/components/colorprofile-select";
 import EventBus from "@/components/eventbus";
-import { Ui, EventType } from "@/components/constant-contig";
+import { Ui, EventType } from "@/components/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {

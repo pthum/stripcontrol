@@ -42,7 +42,7 @@
 import colorhelper from "./colorhelper";
 import EventBus from "./eventbus";
 import { mapGetters } from "vuex";
-import { EventType } from "./constant-contig";
+import { EventType } from "./constant-config";
 
 export default {
   name: "colorprofile-select",

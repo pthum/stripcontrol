@@ -2,15 +2,7 @@
   <div class="led-strip">
     <h4 v-if="typeof id !== 'undefined'" align="center">
       Edit &quot;{{ name }}&quot;({{ id }})
-      <q-btn
-        @click="removeModal = true"
-        align="right"
-        color="negative"
-        v-if="typeof id !== 'undefined'"
-        icon="delete"
-        size="lg"
-        flat
-      ></q-btn>
+    <remove-modal :removalText="`Really Remove LED Strip  ${name} ?`" :deleteEntry="deleteEntry" />
     </h4>
     <h4 align="center" v-else>Create LED Strip</h4>
     <div class="q-pa-md">
@@ -125,29 +117,6 @@
         </div>
       </q-form>
     </div>
-    <q-dialog
-      id="modal-remove-ledstrip"
-      v-model="removeModal"
-      header-bg-variant="dark"
-      header-text-variant="danger"
-      title="Remove strip?"
-    >
-      <q-card>
-        <q-card-section> <q-avatar icon="warning"></q-avatar>
-          Really remove led strip &quot;{{ name }}&quot; ?
-        </q-card-section>
-        <q-separator></q-separator>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
-          <q-btn
-            label="Remove!"
-            color="negative"
-            v-close-popup
-            @click="deleteEntry"
-          ></q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <q-dialog v-model="pinout" title="Pinout">
       <q-card>
@@ -170,14 +139,17 @@
 <script>
 import ApiManager from "./api-manager";
 import { mapGetters, mapMutations } from "vuex";
+import RemoveModal from "./removeModal"
 
 export default {
   name: "strip-form",
   props: ["formStripName"],
+  components: {
+    RemoveModal
+  },
   data() {
     return {
       pinout: false,
-      removeModal: false,
     };
   },
   computed: {
