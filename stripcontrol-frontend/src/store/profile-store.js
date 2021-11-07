@@ -1,18 +1,10 @@
+import { StoreProfile } from "@/models/storeprofile";
+
 export default {
   state: {
     backendProfiles: [],
-    editableProfile: {
-      red: 255,
-      green: 255,
-      blue: 255,
-      brightness: 0,
-    },
-    selectedProfile: {
-      red: 255,
-      green: 255,
-      blue: 255,
-      brightness: 0,
-    },
+    editableProfile: new StoreProfile(255, 255, 255, 0),
+    selectedProfile: new StoreProfile(255, 255, 255, 0),
   },
   mutations: {
     /** update the backend profiles */
@@ -26,7 +18,7 @@ export default {
     },
     /** resets the color profile to 0 values, without id, expects an object containing a type field */
     resetColorProfile(state, obj) {
-      state[obj.type] = { red: 255, green: 255, blue: 255, brightness: 0 };
+      state[obj.type] = new StoreProfile(255, 255, 255, 0);
     },
     updateColorProfileInBackendList(state, updatedEntry) {
       if (updatedEntry === "undefined" || updatedEntry.id === "undefined") {

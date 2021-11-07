@@ -1,9 +1,9 @@
 <template>
   <div class="led-strip">
-    <h4 v-if="typeof id !== 'undefined'" align="center">
-      Edit &quot;{{ name }}&quot;({{ id }})
+    <h4 v-if="typeof currentStrip.id !== 'undefined'" align="center">
+      Edit &quot;{{ currentStrip.name }}&quot;({{ currentStrip.id }})
       <remove-modal
-        :removalText="`Really Remove LED Strip  ${name} ?`"
+        :removalText="`Really Remove LED Strip  ${currentStrip.name} ?`"
         :deleteEntry="deleteEntry"
       />
     </h4>
@@ -17,8 +17,8 @@
               id="nameValue"
               type="text"
               aria-describedby="input-name-required-feedback"
-              :rules="[(val) => val.length > 0 || 'Required']"
-              v-model="name"
+              :rules="[(val) => textValid(val) || 'Required']"
+              v-model="currentStrip.name"
               label="Name"
             />
           </div>
@@ -29,7 +29,7 @@
               outlined
               id="descriptionValue"
               type="text"
-              v-model="description"
+              v-model="currentStrip.description"
               label="Description"
             />
           </div>
@@ -40,12 +40,9 @@
               outlined
               id="misoPinValue"
               type="number"
-              v-model="misoPin"
+              v-model.number="currentStrip.misoPin"
               label="MISO Pin"
-              :rules="[
-                (currentPin) =>
-                  (currentPin >= 0 && currentPin <= 27) || 'Invalid Pin',
-              ]"
+              :rules="[(currentPin) => pinValid(currentPin) || 'Invalid Pin']"
             >
               <template v-slot:append>
                 <q-icon name="info" @click="pinout = true" />
@@ -59,12 +56,9 @@
               outlined
               id="sclkPinValue"
               type="number"
-              v-model="sclkPin"
+              v-model.number="currentStrip.sclkPin"
               label="SCLK Pin"
-              :rules="[
-                (currentPin) =>
-                  (currentPin >= 0 && currentPin <= 27) || 'Invalid Pin',
-              ]"
+              :rules="[(currentPin) => pinValid(currentPin) || 'Invalid Pin']"
             >
               <template v-slot:append>
                 <q-icon name="info" @click="pinout = true" />
@@ -78,9 +72,9 @@
               outlined
               id="numLedValue"
               type="number"
-              v-model="numLeds"
+              v-model.number="currentStrip.numLeds"
               label="# LEDs"
-              :rules="[(val) => val > 0 || 'Minimum one LED necessary']"
+              :rules="[(val) => ledsValid(val) || 'Minimum one LED necessary']"
             />
           </div>
         </div>
@@ -90,7 +84,7 @@
               outlined
               id="speedValue"
               type="number"
-              v-model="speedHz"
+              v-model.number="currentStrip.speedHz"
               label="Speed (Hz)"
             />
           </div>
@@ -101,10 +95,10 @@
               <q-btn
                 color="positive"
                 type="submit"
-                v-if="typeof id !== 'undefined'"
+                v-if="typeof currentStrip.id !== 'undefined'"
                 icon="edit"
                 :disable="writable === false"
-                >Edit &quot;{{ name }}&quot;
+                >Edit &quot;{{ currentStrip.name }}&quot;
               </q-btn>
               <q-btn
                 color="positive"
@@ -143,6 +137,7 @@
 import ApiManager from "@/api/manager";
 import { mapGetters } from "vuex";
 import RemoveModal from "@/components/removeModal";
+import { StoreStrip } from "@/models/storestrip";
 
 export default {
   name: "ledstrip-form",
@@ -156,106 +151,54 @@ export default {
     };
   },
   computed: {
-    name: {
-      get() {
-        return this.findLedStrip(this.formStripName).name;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).name = value;
-      },
-    },
-    description: {
-      get() {
-        return this.findLedStrip(this.formStripName).description;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).description = value;
-      },
-    },
-    /* indicates, whether the name input field is valid */
-    nameState() {
-      return this.findLedStrip(this.formStripName).name.length > 0
-        ? null
-        : false;
-    },
-    misoValid() {
-      var currentPin = this.findLedStrip(this.formStripName).misoPin;
-      currentPin = parseInt(currentPin, 10);
-      return currentPin >= 0 && currentPin <= 27 ? null : false;
-    },
-    sclkValid() {
-      var currentPin = this.findLedStrip(this.formStripName).sclkPin;
-      currentPin = parseInt(currentPin, 10);
-      return currentPin >= 0 && currentPin <= 27 ? null : false;
-    },
-    numLedsValid() {
-      return parseInt(this.findLedStrip(this.formStripName).numLeds, 10) > 0
-        ? null
-        : false;
+    currentStrip() {
+      return this.findLedStrip(this.formStripName);
     },
     /* indicates, whether the form can be submitted (create or update) */
     writable() {
-      return this.nameState && this.misoValid && this.sclkValid;
-    },
-
-    misoPin: {
-      get() {
-        return this.findLedStrip(this.formStripName).misoPin;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).misoPin = value;
-      },
-    },
-    numLeds: {
-      get() {
-        return this.findLedStrip(this.formStripName).numLeds;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).numLeds = value;
-      },
-    },
-    sclkPin: {
-      get() {
-        return this.findLedStrip(this.formStripName).sclkPin;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).sclkPin = value;
-      },
-    },
-    speedHz: {
-      get() {
-        return this.findLedStrip(this.formStripName).speedHz;
-      },
-      set(value) {
-        this.findLedStrip(this.formStripName).speedHz = value;
-      },
-    },
-    id() {
-      return this.findLedStrip(this.formStripName).id;
+      if (
+        this.textValid(this.currentStrip.name) &&
+        this.pinValid(this.currentStrip.misoPin) &&
+        this.pinValid(this.currentStrip.sclkPin) &&
+        this.ledsValid(this.currentStrip.numLeds)
+      ) {
+        return true;
+      }
+      return false;
     },
     ...mapGetters(["findLedStrip"]),
   },
   methods: {
     /** save an entry, will do an update if id is set, create otherwise */
     saveEntry() {
-      var obj = {
-        name: this.name,
-        description: this.description,
-        misoPin: this.misoPin,
-        sclkPin: this.sclkPin,
-        numLeds: this.numLeds,
-        speedHz: this.speedHz,
-        id: this.id,
-      };
-      if (typeof this.id !== "undefined") {
+      var obj = new StoreStrip(
+        this.currentStrip.name,
+        this.currentStrip.description,
+        this.currentStrip.misoPin,
+        this.currentStrip.sclkPin,
+        this.currentStrip.numLeds,
+        this.currentStrip.speedHz,
+        this.currentStrip.id
+      );
+      if (typeof this.currentStrip.id !== "undefined") {
         ApiManager.updateLedStrip(this, obj);
       } else {
         ApiManager.createLedStrip(this, obj);
       }
     },
+    textValid(value) {
+      return value.length > 0 ? true : false;
+    },
+    pinValid(pin) {
+      var currentPin = parseInt(pin, 10);
+      return currentPin >= 0 && currentPin <= 27 ? true : false;
+    },
+    ledsValid(leds) {
+      return parseInt(leds, 10) > 0 ? true : false;
+    },
     /** delete an entry */
     deleteEntry() {
-      var obj = { id: this.id, name: this.name };
+      var obj = { id: this.currentStrip.id, name: this.currentStrip.name };
       ApiManager.deleteLedStrip(this, obj);
     },
   },

@@ -1,22 +1,16 @@
 import { reactive } from "@vue/reactivity";
+import { StoreStrip } from "@/models/storestrip";
 
 export default {
   state: {
     backendStrips: [],
-    editableStrip: {
-      name: "",
-      description: "",
-      misoPin: 0,
-      numLeds: 30,
-      sclkPin: 0,
-      speedHz: 8000000,
-    },
+    editableStrip: new StoreStrip("", "", 0, 0, 30, 8000000),
     selectedStrip: {},
   },
   mutations: {
     /** update the backend strips */
     updateBackendStrips(state, loadedLedStrips) {
-      state.backendStrips = loadedLedStrips;
+      state.backendStrips = loadedLedStrips.sort((a,b) => a.name.localeCompare(b.name));
     },
     /** update the LED strip, expects an object containing a field with type and a field with name object
      * containing the object */
@@ -38,14 +32,7 @@ export default {
     },
     /** resets the led strip to 0 values, without id, expects an object containing a type field */
     resetLedStrip(state, obj) {
-      state[obj.type] = reactive({
-        name: "",
-        description: "",
-        misoPin: 0,
-        numLeds: 30,
-        sclkPin: 0,
-        speedHz: 8000000,
-      });
+      state[obj.type] = reactive(new StoreStrip("", "", 0, 0, 30, 8000000));
     },
     updateLedStripInBackendList(state, updatedEntry) {
       if (updatedEntry === "undefined" || updatedEntry.id === "undefined") {

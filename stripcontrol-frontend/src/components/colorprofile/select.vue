@@ -26,10 +26,9 @@
               <div
                 class="foo"
                 :style="{ backgroundColor: getHexColor(profile) }"
-              >
-                &nbsp;
-              </div>
-              &#x2600;: {{ profile.brightness }}
+              ></div>
+              <q-icon name="brightness_medium"></q-icon>
+              {{ profile.brightness }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -65,7 +64,7 @@ export default {
         typeof this.selected === "undefined" ||
         typeof this.selected.id === "undefined"
       ) {
-        return "Select profile";
+        return "Select Profile";
       }
       var brightness =
         typeof this.selected.brightness !== "undefined"
