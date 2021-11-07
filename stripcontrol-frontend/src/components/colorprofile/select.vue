@@ -39,10 +39,10 @@
 </template>
 
 <script>
-import colorhelper from "./colorhelper";
-import EventBus from "./eventbus";
+import colorhelper from "@/utils/colorhelper";
+import EventBus from "@/utils/eventbus";
 import { mapGetters } from "vuex";
-import { EventType } from "./constant-config";
+import { EventType } from "@/utils/constant-config";
 
 export default {
   name: "colorprofile-select",

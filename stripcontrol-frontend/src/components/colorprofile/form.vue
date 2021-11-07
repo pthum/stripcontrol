@@ -4,7 +4,10 @@
     <h4 align="center" v-if="typeof id !== 'undefined'">
       Edit Profile {{ id }}
 
-    <remove-modal :removalText="`Really Remove Profile  ${id} ?`" :deleteEntry="deleteEntry" />
+      <remove-modal
+        :removalText="`Really Remove Profile  ${id} ?`"
+        :deleteEntry="deleteEntry"
+      />
     </h4>
     <h4 align="center" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
@@ -59,16 +62,16 @@
         </div>
         <div class="row">
           <div class="col" align="center">
-              <q-btn
-                color="positive"
-                type="submit"
-                v-if="typeof id !== 'undefined'"
-                icon="edit"
-                >Edit {{ id }}</q-btn
-              >
-              <q-btn color="positive" type="submit" v-else icon="add-box"
-                >Create</q-btn
-              >
+            <q-btn
+              color="positive"
+              type="submit"
+              v-if="typeof id !== 'undefined'"
+              icon="edit"
+              >Edit {{ id }}</q-btn
+            >
+            <q-btn color="positive" type="submit" v-else icon="add-box"
+              >Create</q-btn
+            >
           </div>
         </div>
       </q-form>
@@ -77,16 +80,16 @@
 </template>
 
 <script>
-import colorhelper from "./colorhelper";
-import ApiManager from "./api-manager";
+import colorhelper from "@/utils/colorhelper";
+import ApiManager from "@/api/manager";
 import { mapMutations, mapGetters } from "vuex";
-import RemoveModal from "./removeModal"
+import RemoveModal from "@/components/removeModal";
 
 export default {
-  name: "color-form",
+  name: "colorprofile-form",
   props: ["formProfileName"],
   components: {
-    RemoveModal
+    RemoveModal,
   },
   computed: {
     red() {

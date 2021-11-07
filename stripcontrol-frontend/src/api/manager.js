@@ -1,7 +1,7 @@
-import api from "./backend-api";
-import EventBus from "./eventbus";
-import { EventType } from "./constant-config";
-import { store } from "../store";
+import api from "./backend";
+import EventBus from "@/utils/eventbus";
+import { EventType } from "@/utils/constant-config";
+import { store } from "@/store";
 
 export default {
   /** create an entry */
@@ -14,7 +14,7 @@ export default {
         obj.id = Number(createdId);
         this.handleSuccess({
           action: EventType.LS_CREATE,
-          text: "Successfully created led strip with id " + createdId,
+          text: `Successfully created led strip with id ${createdId}`,
           object: obj,
         });
       })
@@ -29,7 +29,7 @@ export default {
       .then(() => {
         this.handleSuccess({
           action: EventType.LS_UPDATE,
-          text: 'Successfully updated led strip "' + obj.name + '"',
+          text: `Successfully updated led strip ${obj.name}`,
           object: obj,
         });
       })
@@ -44,7 +44,7 @@ export default {
       .then(() => {
         this.handleSuccess({
           action: EventType.LS_DELETE,
-          text: 'Deleted led strip "' + obj.name + '"',
+          text: `Deleted led strip ${obj.name}`,
           object: obj,
         });
       })
@@ -102,7 +102,7 @@ export default {
         obj.id = Number(createdId);
         this.handleSuccess({
           action: EventType.CP_CREATE,
-          text: "Successfully created color profile with id " + createdId,
+          text: `Successfully created color profile with id ${createdId}`,
           object: obj,
         });
       })
@@ -117,7 +117,7 @@ export default {
       .then(() => {
         this.handleSuccess({
           action: EventType.CP_UPDATE,
-          text: "Successfully updated color profile with id " + obj.id,
+          text: `Successfully updated color profile with id ${obj.id}`,
           object: obj,
         });
       })
@@ -132,7 +132,7 @@ export default {
       .then(() => {
         this.handleSuccess({
           action: EventType.CP_DELETE,
-          text: "Deleted color profile with id " + obj.id,
+          text: `Deleted color profile with id ${obj.id}`,
           object: obj,
         });
       })
@@ -142,7 +142,6 @@ export default {
   },
   /** handle success message, expects object with text field and optionally an object field */
   handleSuccess(event) {
-    console.log(event);
     EventBus.$emit(event.action, {
       type: "positive",
       message: event.text,

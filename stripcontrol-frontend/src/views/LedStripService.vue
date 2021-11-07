@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import ApiManager from "@/components/api-manager";
-import ledstripform from "@/components/ledstrip-form";
-import ledstripselect from "@/components/ledstrip-select";
-import EventBus from "@/components/eventbus";
-import { Ui, EventType } from "@/components/constant-config";
+import ApiManager from "@/api/manager";
+import ledstripform from "@/components/ledstrip/form";
+import ledstripselect from "@/components/ledstrip/select";
+import EventBus from "@/utils/eventbus";
+import { Ui, EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {

@@ -2,7 +2,10 @@
   <div class="led-strip">
     <h4 v-if="typeof id !== 'undefined'" align="center">
       Edit &quot;{{ name }}&quot;({{ id }})
-    <remove-modal :removalText="`Really Remove LED Strip  ${name} ?`" :deleteEntry="deleteEntry" />
+      <remove-modal
+        :removalText="`Really Remove LED Strip  ${name} ?`"
+        :deleteEntry="deleteEntry"
+      />
     </h4>
     <h4 align="center" v-else>Create LED Strip</h4>
     <div class="q-pa-md">
@@ -137,15 +140,15 @@
 </template>
 
 <script>
-import ApiManager from "./api-manager";
-import { mapGetters, mapMutations } from "vuex";
-import RemoveModal from "./removeModal"
+import ApiManager from "@/api/manager";
+import { mapGetters } from "vuex";
+import RemoveModal from "@/components/removeModal";
 
 export default {
-  name: "strip-form",
+  name: "ledstrip-form",
   props: ["formStripName"],
   components: {
-    RemoveModal
+    RemoveModal,
   },
   data() {
     return {
@@ -255,9 +258,6 @@ export default {
       var obj = { id: this.id, name: this.name };
       ApiManager.deleteLedStrip(this, obj);
     },
-    ...mapMutations({
-      updateStrip: "updateStripType",
-    }),
   },
 };
 </script>

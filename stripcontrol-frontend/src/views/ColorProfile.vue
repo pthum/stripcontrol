@@ -34,11 +34,11 @@
 </template>
 
 <script>
-import ApiManager from "@/components/api-manager";
-import colorprofileform from "@/components/colorprofile-form";
-import colorprofileselect from "@/components/colorprofile-select";
-import EventBus from "@/components/eventbus";
-import { Ui, EventType } from "@/components/constant-config";
+import ApiManager from "@/api/manager";
+import colorprofileform from "@/components/colorprofile/form";
+import colorprofileselect from "@/components/colorprofile/select";
+import EventBus from "@/utils/eventbus";
+import { Ui, EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
