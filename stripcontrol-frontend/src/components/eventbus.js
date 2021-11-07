@@ -2,11 +2,12 @@ import emitter from "tiny-emitter/instance";
 class EventBusClz {
   /** makes a toast, expects an object with content field and variant field */
   makeToast(vm, toastData) {
-    vm.$bvToast.toast(toastData.content, {
-      title: ` ${toastData.variant || "default"}`,
-      variant: toastData.variant,
-      solid: true,
-    });
+    vm.$q.notify(toastData);
+    // vm.$bvToast.toast(toastData.content, {
+    //   title: ` ${toastData.variant || "default"}`,
+    //   variant: toastData.variant,
+    //   solid: true,
+    // });
   }
   $on(...args) {
     emitter.on(...args);

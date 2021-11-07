@@ -1,11 +1,20 @@
 <template>
   <div class="led-strip">
-    <h4 v-if="typeof id !== 'undefined'">
-      Edit Strip &quot;{{ name }}&quot; ({{ id }})
+    <h4 v-if="typeof id !== 'undefined'" align="center">
+      Edit &quot;{{ name }}&quot;({{ id }})
+      <q-btn
+        @click="removeModal = true"
+        align="right"
+        color="negative"
+        v-if="typeof id !== 'undefined'"
+        icon="delete"
+        size="lg"
+        flat
+      ></q-btn>
     </h4>
-    <h4 v-else>Create LED Strip</h4>
+    <h4 align="center" v-else>Create LED Strip</h4>
     <div class="q-pa-md">
-      <q-form class="q-gutter-md" @submit="saveEntry">
+      <q-form @submit="saveEntry" class="q-gutter-md">
         <div class="row">
           <div class="col col-sm=9">
             <q-input
@@ -92,15 +101,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col" align="center">
             <div>
-              <q-btn
-                color="negative"
-                v-if="typeof id !== 'undefined'"
-                icon="delete"
-                >Delete &quot;{{ name }}&quot;</q-btn
-              >
-              <!-- v-b-modal.modal-remove-ledstrip  -->
               <q-btn
                 color="positive"
                 type="submit"
@@ -119,22 +121,34 @@
                 Create
               </q-btn>
             </div>
-            <q-dialog
-              id="modal-remove-ledstrip"
-              v-model="removeModal"
-              header-bg-variant="dark"
-              header-text-variant="danger"
-              title="Remove strip?"
-            >
-              <!--  @ok="deleteEntry" -->
-              <p class="my-4">
-                Really remove led strip &quot;{{ name }}&quot; ?
-              </p>
-            </q-dialog>
           </div>
         </div>
       </q-form>
     </div>
+    <q-dialog
+      id="modal-remove-ledstrip"
+      v-model="removeModal"
+      header-bg-variant="dark"
+      header-text-variant="danger"
+      title="Remove strip?"
+    >
+      <q-card>
+        <q-card-section> <q-avatar icon="warning"></q-avatar>
+          Really remove led strip &quot;{{ name }}&quot; ?
+        </q-card-section>
+        <q-separator></q-separator>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+          <q-btn
+            label="Remove!"
+            color="negative"
+            v-close-popup
+            @click="deleteEntry"
+          ></q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="pinout" title="Pinout">
       <q-card>
         <q-card-section class="q-pt-none">

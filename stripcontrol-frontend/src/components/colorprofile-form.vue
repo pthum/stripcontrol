@@ -1,12 +1,23 @@
 <template>
   <div class="color-profile">
     <p></p>
-    <h4 v-if="typeof id !== 'undefined'">Edit Profile {{ id }}</h4>
-    <h4 v-else>Create ColorProfile</h4>
+    <h4 align="center" v-if="typeof id !== 'undefined'">
+      Edit Profile {{ id }}
+
+      <q-btn
+        @click="removeModal = true"
+        color="negative"
+        v-if="typeof id !== 'undefined'"
+        icon="delete"
+        size="lg"
+        flat
+      ></q-btn>
+    </h4>
+    <h4 align="center" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
-      <q-form class="q-gutter-md" @submit="saveEntry">
+      <q-form @submit="saveEntry" class="q-gutter-md">
         <div class="row">
-          <div class="col col">
+          <div class="col">
             <q-item>
               <q-item-section avatar>
                 <q-icon name="brightness_medium" />
@@ -15,7 +26,7 @@
                 <q-slider
                   id="brightnessValue"
                   v-model="brightness"
-                  icon
+                  icon="brightness_medium"
                   label
                   label-always
                   :min="0"
@@ -25,53 +36,46 @@
               </q-item-section>
             </q-item>
           </div>
-          <div class="col col-1">{{ brightness }}</div>
         </div>
         <div class="row">
-          <div class="col col-3">
-            <label><q-icon name="palette"> </q-icon></label>
-          </div>
-          <div class="col col-9">
+          <div class="col">
             <q-card :style="styleBg"
-              ><q-card-section
-                >{{ red }}, {{ green }}, {{ blue }}
+              ><q-card-section horizontal class="col">
+                <q-card-actions vertical>
+                  <q-icon size="md" name="palette"
+                /></q-card-actions>
+                {{ red }}, {{ green }}, {{ blue }}
+                <q-card-actions vertical class="justify-around q-px-md">
+                  <q-btn flat icon="colorize" class="cursor-pointer">
+                    <q-popup-proxy
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-color
+                        v-model="color"
+                        no-header
+                        no-footer
+                        class="my-picker"
+                      ></q-color>
+                    </q-popup-proxy>
+                  </q-btn>
+                </q-card-actions>
               </q-card-section>
-
-              <q-icon name="colorize" class="cursor-pointer">
-                <q-popup-proxy transition-show="scale" transition-hide="scale">
-                  <q-color
-                    v-model="color"
-                    no-header
-                    no-footer
-                    class="my-picker"
-                  ></q-color>
-                </q-popup-proxy>
-              </q-icon>
             </q-card>
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <q-btn-group>
+          <div class="col" align="center">
               <q-btn
-                variant="danger"
-                v-if="typeof id !== 'undefined'"
-                icon="delete"
-                @click="removeModal = true"
-                >Delete {{ id }}</q-btn
-              >
-              <q-btn
-                variant="success"
+                color="positive"
                 type="submit"
                 v-if="typeof id !== 'undefined'"
                 icon="edit"
                 >Edit {{ id }}</q-btn
               >
-              <q-btn variant="success" type="submit" v-else icon="add-box"
+              <q-btn color="positive" type="submit" v-else icon="add-box"
                 >Create</q-btn
               >
-            </q-btn-group>
-
             <q-dialog
               id="modal-remove-colorprofile"
               v-model="removeModal"
@@ -79,8 +83,26 @@
               header-text-variant="danger"
               title="Remove profile?"
             >
-              <!--  @ok="deleteEntry" -->
-              <p class="my-4">Really remove profile &quot;{{ name }}&quot; ?</p>
+              <q-card>
+                <q-card-section> <q-avatar icon="warning"></q-avatar>
+                    Really remove profile &quot;{{ id }}&quot; ?
+                </q-card-section>
+                <q-separator></q-separator>
+                <q-card-actions align="right">
+                  <q-btn
+                    flat
+                    label="Cancel"
+                    color="primary"
+                    v-close-popup
+                  ></q-btn>
+                  <q-btn
+                    label="Remove!"
+                    color="negative"
+                    v-close-popup
+                    @click="deleteEntry"
+                  ></q-btn>
+                </q-card-actions>
+              </q-card>
             </q-dialog>
           </div>
         </div>

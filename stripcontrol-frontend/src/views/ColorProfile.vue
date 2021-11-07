@@ -2,8 +2,7 @@
   <div class="colorProfileService">
     <div class="q-pa-md">
       <div class="row">
-        <div class="col col-3"></div>
-        <div class="col col-5">
+        <div class="col" align="center">
           <q-btn-group>
             <colorprofileselect
               selectProfileName="selectedProfile"
@@ -24,7 +23,6 @@
             />
           </q-btn-group>
         </div>
-        <div class="col"></div>
       </div>
       <div class="row">
         <div class="col">

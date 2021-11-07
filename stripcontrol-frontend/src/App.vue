@@ -1,12 +1,15 @@
 <template>
   <q-layout view="hHh lpR fff">
     <q-header elevated class="bg-black text-white" height-hint="98">
-      <q-tabs align="left">
-        <q-route-tab to="/" label="Home" />
-        <q-route-tab to="/colorprofileservice" label="Color Profiles" />
-        <q-route-tab to="/ledstripservice" label="LED Strips" />
-      </q-tabs>
-      <div align="right"><q-icon name="light_mode" @click="toggleLight()"></q-icon></div>
+      <q-toolbar>
+        <q-tabs align="left">
+          <q-route-tab to="/" label="Home" />
+          <q-route-tab to="/colorprofileservice" label="Color Profiles" />
+          <q-route-tab to="/ledstripservice" label="LED Strips" />
+        </q-tabs>
+        <q-space></q-space>
+        <q-btn icon="light_mode" @click="toggleLight()"></q-btn>
+      </q-toolbar>
     </q-header>
 
     <q-page-container>
@@ -21,8 +24,7 @@ import { ref } from "vue";
 export default {
   name: "LayoutDefault",
 
-  components: {
-  },
+  components: {},
 
   setup() {
     return {
@@ -30,9 +32,9 @@ export default {
     };
   },
   methods: {
-    toggleLight()  {
+    toggleLight() {
       this.$q.dark.toggle();
-    }
-  }
+    },
+  },
 };
 </script>

@@ -2,26 +2,24 @@
   <div class="ledStripService">
     <div class="q-pa-md">
       <div class="row">
-        <div class="col"></div>
-        <div class="col">
+        <div class="col" align="center">
           <q-btn-group>
             <ledstripselect />
-            <q-btn variant="dark" icon="sync" @click="callGetLedStrips()" />
+            <q-btn color="dark" icon="sync" @click="callGetLedStrips()" />
             <q-btn
-              :variant="variantEdit"
+              :color="variantEdit"
               icon="edit"
               :disabled="disabledEdit"
               @click="toggle(false)"
             />
             <q-btn
-              :variant="variantCreate"
-              icon="add_circle_outline"
+              :color="variantCreate"
+              icon="add_box"
               :disabled="disabledCreate"
               @click="toggle(true)"
             />
           </q-btn-group>
         </div>
-        <div class="col"></div>
       </div>
       <div class="row">
         <div class="col">

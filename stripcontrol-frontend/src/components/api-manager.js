@@ -1,5 +1,5 @@
 import api from "./backend-api";
-// import EventBus from './eventbus'
+import EventBus from "./eventbus";
 import { EventType } from "./constant-contig";
 import { store } from "../store";
 
@@ -143,11 +143,20 @@ export default {
   /** handle success message, expects object with text field and optionally an object field */
   handleSuccess(event) {
     console.log(event);
-    // EventBus.$emit(event.action, { variant: 'success', content: event.text, object: event.object })
+    EventBus.$emit(event.action, {
+      type: "positive",
+      message: event.text,
+      object: event.object,
+      position: "top-right",
+    });
   },
   /** handle error message */
   handleError(vm, error) {
-    // EventBus.makeToast(vm, { variant: 'danger', content: error.message })
+    EventBus.makeToast(vm, {
+      type: "negative",
+      message: error.message,
+      position: "top-right",
+    });
     throw error;
   },
 };
