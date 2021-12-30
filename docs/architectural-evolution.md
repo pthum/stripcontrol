@@ -4,6 +4,7 @@ This file describes the architectural evolution of the project over time.
 
 ## Initial Setup
 The first version consisted of a monolithic architecture. The initial spring-boot project bundled the frontend during the build process and controlled the database connection, as well as the LED strips itself.
+
 The monolith did the update on database level and the modifications on the state of the LED strips were done synchronously within a request.
 
 ## First evolution: using events
