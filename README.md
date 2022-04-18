@@ -17,10 +17,11 @@ Furthermore, this project is also a playground to try different technologies, to
 In the current state, there are several sub-projects in this project, split over different repositories.
 
 - [Frontend Project](stripcontrol-frontend/README.md)
+  - [Archived: Old Frontend Project](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-frontend)
 - API Backend implementations (Alternative implementations)
   - [Golang API-Backend](https://github.com/pthum/stripcontrol-golang)
-  - [Quarkus API-Backend](https://github.com/pthum/stripcontrol/tree/master/stripcontrol-quarkusbackend)
-  - [SpringBoot API-Backend](https://github.com/pthum/stripcontrol/tree/master/stripcontrol-springbackend)
+  - [Archived: Quarkus API-Backend](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-quarkusbackend)
+  - [Archived: SpringBoot API-Backend](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-springbackend)
 - [Quarkus LightControl Backend](https://github.com/pthum/stripcontrol/tree/master/stripcontrol-quarkuslights)
 
 ### Architectural Evoluation of the project
