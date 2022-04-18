@@ -22,9 +22,9 @@ In the current state, there are several sub-projects in this project, split over
   - [Golang API-Backend](https://github.com/pthum/stripcontrol-golang)
   - [Archived: Quarkus API-Backend](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-quarkusbackend)
   - [Archived: SpringBoot API-Backend](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-springbackend)
-- [Quarkus LightControl Backend](https://github.com/pthum/stripcontrol/tree/master/stripcontrol-quarkuslights)
+- [Quarkus LightControl Backend](https://github.com/pthum/stripcontrol-java/tree/main/stripcontrol-quarkuslights)
 
-### Architectural Evoluation of the project
+### Architectural Evolution of the project
 see [Architectural Evolution](docs/architectural-evolution.md)
 
 TBC
