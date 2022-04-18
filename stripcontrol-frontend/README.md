@@ -1,5 +1,7 @@
 # stripcontrol-frontend
 
+This is a rework of the [old frontend implementation](https://github.com/pthum/stripcontrol-archive/tree/main/stripcontrol-frontend), which is made with Vue3 and Quasar (instead of Vue2 and Bootstrap)
+
 ## Project setup
 ```
 yarn install

@@ -27,4 +27,7 @@ In the current state, there are several sub-projects in this project, split over
 ### Architectural Evolution of the project
 see [Architectural Evolution](docs/architectural-evolution.md)
 
+### Specifications
+- [Event Specification](docs/events.md)
+
 TBC
