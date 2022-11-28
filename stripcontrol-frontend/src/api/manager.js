@@ -9,8 +9,8 @@ export default {
     api
       .postLedStrip(obj)
       .then((response) => {
-        var resUrlArray = response.headers.location.split("/");
-        var createdId = resUrlArray[resUrlArray.length - 1];
+        let resUrlArray = response.headers.location.split("/");
+        let createdId = resUrlArray[resUrlArray.length - 1];
         obj.id = Number(createdId);
         this.handleSuccess({
           action: EventType.LS_CREATE,
@@ -97,8 +97,8 @@ export default {
     api
       .postColorProfile(obj)
       .then((response) => {
-        var resUrlArray = response.headers.location.split("/");
-        var createdId = resUrlArray[resUrlArray.length - 1];
+        let resUrlArray = response.headers.location.split("/");
+        let createdId = resUrlArray[resUrlArray.length - 1];
         obj.id = Number(createdId);
         this.handleSuccess({
           action: EventType.CP_CREATE,

@@ -21,7 +21,7 @@ export default {
       if (stripEvent === "undefined" || stripEvent.stripId === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === stripEvent.stripId
       );
       if (objIdx >= 0) {
@@ -38,7 +38,7 @@ export default {
       if (updatedEntry === "undefined" || updatedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === updatedEntry.id
       );
       if (objIdx < 0) {
@@ -51,7 +51,7 @@ export default {
       if (removedEntry === "undefined" || removedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === removedEntry.id
       );
       if (objIdx >= 0) {

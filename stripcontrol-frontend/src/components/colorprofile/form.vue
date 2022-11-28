@@ -1,7 +1,7 @@
 <template>
   <div class="color-profile">
     <p></p>
-    <h4 align="center" v-if="typeof currentProfile.id !== 'undefined'">
+    <h4 class="centered" v-if="typeof currentProfile.id !== 'undefined'">
       Edit Profile {{ currentProfile.id }}
 
       <remove-modal
@@ -9,7 +9,7 @@
         :deleteEntry="deleteEntry"
       />
     </h4>
-    <h4 align="center" v-else>Create Color Profile</h4>
+    <h4 class="centered" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
       <q-form @submit="saveEntry" class="q-gutter-md">
         <div class="row">
@@ -42,11 +42,7 @@
                 <q-card-actions vertical>
                   <q-icon size="md" name="palette"
                 /></q-card-actions>
-                <div
-                class="foo text-h5"
-                :style="styleBg"
-              > &nbsp;
-                </div>
+                <div class="foo text-h5" :style="styleBg">&nbsp;</div>
                 <q-card-actions vertical class="justify-around q-px-md">
                   <q-btn flat icon="colorize" class="cursor-pointer">
                     <q-popup-proxy
@@ -67,7 +63,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col" align="center">
+          <div class="col centered">
             <q-btn
               color="positive"
               type="submit"
@@ -75,9 +71,7 @@
               icon="edit"
               >Edit {{ currentProfile.id }}</q-btn
             >
-            <q-btn color="positive" type="submit" v-else icon="add_box"
-              >Create</q-btn
-            >
+            <q-btn color="positive" type="submit" v-else icon="add_box">Create</q-btn>
           </div>
         </div>
       </q-form>
@@ -123,9 +117,9 @@ export default {
   methods: {
     /** handles an update of hex value */
     handleColorHex(hexValue) {
-      var result = colorhelper.hexToRgb(hexValue);
+      let result = colorhelper.hexToRgb(hexValue);
 
-      var obj = new StoreProfile(
+      let obj = new StoreProfile(
         result.r,
         result.g,
         result.b,
@@ -136,7 +130,7 @@ export default {
     },
     /** handles an update of brightness */
     handleBrightness(value) {
-      var obj = new StoreProfile(
+      let obj = new StoreProfile(
         this.currentProfile.red,
         this.currentProfile.green,
         this.currentProfile.blue,
@@ -147,7 +141,7 @@ export default {
     },
     /** save an entry, will do an update if id is set, create otherwise */
     saveEntry() {
-      var obj = new StoreProfile(
+      let obj = new StoreProfile(
         this.currentProfile.red,
         this.currentProfile.green,
         this.currentProfile.blue,
@@ -162,7 +156,7 @@ export default {
     },
     /** delete an entry */
     deleteEntry() {
-      var obj = { id: this.currentProfile.id };
+      let obj = { id: this.currentProfile.id };
       ApiManager.deleteColorProfile(this, obj);
     },
     ...mapMutations({
@@ -174,21 +168,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 .foo {
   float: left;
   width: 100%;

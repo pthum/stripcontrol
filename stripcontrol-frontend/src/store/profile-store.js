@@ -24,7 +24,7 @@ export default {
       if (updatedEntry === "undefined" || updatedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendProfiles.findIndex(
+      let objIdx = state.backendProfiles.findIndex(
         (obj) => obj.id === updatedEntry.id
       );
       if (objIdx < 0) {
@@ -37,7 +37,7 @@ export default {
       if (removedEntry === "undefined" || removedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendProfiles.findIndex(
+      let objIdx = state.backendProfiles.findIndex(
         (obj) => obj.id === removedEntry.id
       );
       if (objIdx >= 0) {
