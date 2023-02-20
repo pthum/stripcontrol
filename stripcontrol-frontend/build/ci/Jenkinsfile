@@ -1,0 +1,30 @@
+library 'jshared' _
+
+properties([
+    parameters([booleanParam('deployParam')])
+  ])
+def serviceName = "stripcontrol-go"
+def deploy = params.deployParam
+def buildUtil = new de.backenddev.jshared.BuildUtil(this)
+def tag
+
+node {
+  stage("prepare") {
+      tag = buildUtil.cleanCheckout() 
+  }
+
+  dir("stripcontrol-frontend") {
+    stage("build") {
+      def buildArgs=[:]
+      def platforms=["linux/arm64", "linux/arm/v7"]
+      def additionalArgs = "--target=finalimage"
+      buildUtil.buildAndPushImage(serviceName, tag, "build/package/Dockerfile", ".",buildArgs, platforms, additionalArgs)
+    }
+
+    stage("deploy") {
+      if(buildUtil.hasBranchDeployConfiguration() && params.deployParam){
+        buildUtil.deployImageRemotely(serviceName, tag)
+      }
+    }
+  }
+}

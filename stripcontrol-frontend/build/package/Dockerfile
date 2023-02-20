@@ -1,10 +1,10 @@
 # build stage
-FROM node:lts-alpine as build-stage
+FROM node:16-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
 COPY yarn.lock ./
-RUN apk add python3 make g++
-RUN yarn install
+RUN apk add --no-cache python3 make g++ \
+  && yarn install
 COPY . .
 RUN yarn build
 
