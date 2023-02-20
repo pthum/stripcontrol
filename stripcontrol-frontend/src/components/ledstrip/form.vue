@@ -156,10 +156,12 @@ export default {
     },
     /* indicates, whether the form can be submitted (create or update) */
     writable() {
-      return this.textValid(this.currentStrip.name) &&
+      return (
+        this.textValid(this.currentStrip.name) &&
         this.pinValid(this.currentStrip.misoPin) &&
         this.pinValid(this.currentStrip.sclkPin) &&
-        this.ledsValid(this.currentStrip.numLeds);
+        this.ledsValid(this.currentStrip.numLeds)
+      );
     },
     ...mapGetters(["findLedStrip"]),
   },
@@ -199,4 +201,3 @@ export default {
   },
 };
 </script>
-

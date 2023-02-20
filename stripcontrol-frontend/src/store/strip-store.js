@@ -10,7 +10,9 @@ export default {
   mutations: {
     /** update the backend strips */
     updateBackendStrips(state, loadedLedStrips) {
-      state.backendStrips = loadedLedStrips.sort((a,b) => a.name.localeCompare(b.name));
+      state.backendStrips = loadedLedStrips.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
     },
     /** update the LED strip, expects an object containing a field with type and a field with name object
      * containing the object */

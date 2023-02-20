@@ -37,7 +37,7 @@
         </div>
         <div class="row">
           <div class="col">
-            <q-card 
+            <q-card
               ><q-card-section horizontal class="col">
                 <q-card-actions vertical>
                   <q-icon size="md" name="palette"
@@ -71,7 +71,9 @@
               icon="edit"
               >Edit {{ currentProfile.id }}</q-btn
             >
-            <q-btn color="positive" type="submit" v-else icon="add_box">Create</q-btn>
+            <q-btn color="positive" type="submit" v-else icon="add_box"
+              >Create</q-btn
+            >
           </div>
         </div>
       </q-form>
@@ -98,9 +100,7 @@ export default {
     },
     color: {
       get() {
-        return colorhelper.rgbToHex(
-          this.currentProfile
-        );
+        return colorhelper.rgbToHex(this.currentProfile);
       },
       set(value) {
         this.handleColorHex(value);

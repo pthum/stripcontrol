@@ -5,8 +5,7 @@ import { store } from "./store";
 import { Quasar } from "quasar";
 import quasarUserOptions from "./quasar-user-options";
 // Importing the global css file
-import "@/assets/css/global.css"
-
+import "@/assets/css/global.css";
 
 createApp(App)
   .use(Quasar, quasarUserOptions)

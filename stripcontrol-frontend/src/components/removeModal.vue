@@ -1,5 +1,4 @@
 <template>
-  
   <q-btn
     @click="test = true"
     align="right"
@@ -31,7 +30,6 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-
 </template>
 
 <script>
