@@ -3,7 +3,7 @@ library 'jshared' _
 properties([
     parameters([booleanParam('deployParam')])
   ])
-def serviceName = "stripcontrol-go"
+def serviceName = "stripcontrol-frontend"
 def deploy = params.deployParam
 def buildUtil = new de.backenddev.jshared.BuildUtil(this)
 def tag

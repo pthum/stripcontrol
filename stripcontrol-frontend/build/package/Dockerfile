@@ -9,7 +9,7 @@ COPY . .
 RUN yarn build
 
 # final image
-FROM nginx:stable-alpine 
+FROM nginx:stable-alpine as finalimage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
