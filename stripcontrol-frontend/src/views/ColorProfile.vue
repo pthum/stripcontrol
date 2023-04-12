@@ -42,7 +42,7 @@ import { Ui, EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
-  name: "colorprofileservice",
+  name: "color-profile-service",
   components: {
     colorprofileform,
     colorprofileselect,

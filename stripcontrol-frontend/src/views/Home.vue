@@ -47,7 +47,7 @@ import { EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
-  name: "stripcontrolservice",
+  name: "strip-control-service",
   components: {
     colorprofileselect,
   },

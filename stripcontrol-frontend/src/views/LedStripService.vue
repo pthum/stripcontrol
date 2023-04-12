@@ -39,7 +39,7 @@ import { Ui, EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
-  name: "ledstripservice",
+  name: "led-strip-service",
   components: {
     ledstripform,
     ledstripselect,
