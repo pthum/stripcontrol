@@ -15,10 +15,12 @@ node {
 
   dir("stripcontrol-frontend") {
     stage("build") {
+      dir("build") {
+        sh "./build.sh sc-fe"
+      }
       def buildArgs=[:]
       def platforms=["linux/arm64", "linux/arm/v7"]
-      def additionalArgs = "--target=finalimage"
-      buildUtil.buildAndPushImage(serviceName, tag, "build/package/Dockerfile", ".",buildArgs, platforms, additionalArgs)
+      buildUtil.buildAndPushImage(serviceName, tag, "build/package/Dockerfile", ".",buildArgs, platforms)
     }
 
     stage("deploy") {
