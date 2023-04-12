@@ -20,7 +20,7 @@ node {
       }
       def buildArgs=[:]
       def platforms=["linux/arm64", "linux/arm/v7"]
-      buildUtil.buildAndPushImage(serviceName, tag, "build/package/Dockerfile", ".",buildArgs, platforms)
+      buildUtil.buildAndPushImage(serviceName, tag, "build/package/final.Dockerfile", ".",buildArgs, platforms)
     }
 
     stage("deploy") {
