@@ -4,11 +4,7 @@
       <div class="row">
         <div class="col centered">
           <q-btn-group>
-            <colorprofileselect
-              selectProfileName="selectedProfile"
-              :preselected="storeSelectedProfile.id"
-            />
-            <q-btn color="dark" @click="callGetColorProfiles()" icon="sync" />
+            <colorprofileselect :preselected="storeSelectedProfile.id" />
             <q-btn
               :color="variantEdit"
               :disabled="disabledEdit"

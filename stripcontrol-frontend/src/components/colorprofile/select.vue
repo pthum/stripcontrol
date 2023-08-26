@@ -1,40 +1,38 @@
 <template>
-  <div class="colorProfileSelect">
-    <q-btn-dropdown :label="stringSelected" v-model="menuState">
-      <q-list>
-        <q-item
-          v-if="storedBackendProfiles.length === 0"
-          disabled
-          clickable
-          v-close-popup
-          @click="onItemClick"
-        >
-          <q-item-section>
-            <q-item-label> No profiles available </q-item-label>
-          </q-item-section>
-        </q-item>
+  <q-btn-dropdown :label="stringSelected" v-model="menuState">
+    <q-list>
+      <q-item
+        v-if="storedBackendProfiles.length === 0"
+        disabled
+        clickable
+        v-close-popup
+        @click="onItemClick"
+      >
+        <q-item-section>
+          <q-item-label> No profiles available </q-item-label>
+        </q-item-section>
+      </q-item>
 
-        <q-item
-          v-else
-          v-for="profile in storedBackendProfiles"
-          :key="profile.id"
-          clickable
-          @click="handleSelection(profile)"
-        >
-          <q-item-section>
-            <q-item-label>
-              <div
-                class="foo"
-                :style="{ backgroundColor: getHexColor(profile) }"
-              ></div>
-              <q-icon name="brightness_medium"></q-icon>
-              {{ profile.brightness }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
-  </div>
+      <q-item
+        v-else
+        v-for="profile in storedBackendProfiles"
+        :key="profile.id"
+        clickable
+        @click="handleSelection(profile)"
+      >
+        <q-item-section>
+          <q-item-label>
+            <div
+              class="foo"
+              :style="{ backgroundColor: getHexColor(profile) }"
+            ></div>
+            <q-icon name="brightness_medium"></q-icon>
+            {{ profile.brightness }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-btn-dropdown>
 </template>
 
 <script>
@@ -45,7 +43,7 @@ import { EventType } from "@/utils/constant-config";
 
 export default {
   name: "colorprofile-select",
-  props: ["selectProfileName", "selectId", "preselected"],
+  props: ["selectId", "preselected"],
   created() {
     this.id = this.preselected;
   },
@@ -83,7 +81,7 @@ export default {
       EventBus.$emit(EventType.CP_SELECT, {
         object: profile,
         stripId: this.selectId,
-        type: this.selectProfileName,
+        type: "selectProfile",
       });
     },
     getHexColor(profile) {

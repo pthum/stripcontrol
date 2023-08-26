@@ -65,13 +65,13 @@
         <div class="row">
           <div class="col centered">
             <q-btn
-              color="positive"
+              color="secondary"
               type="submit"
               v-if="typeof currentProfile.id !== 'undefined'"
               icon="edit"
               >Edit {{ currentProfile.id }}</q-btn
             >
-            <q-btn color="positive" type="submit" v-else icon="add_box"
+            <q-btn color="secondary" type="submit" v-else icon="add"
               >Create</q-btn
             >
           </div>

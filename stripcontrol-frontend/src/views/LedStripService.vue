@@ -5,7 +5,6 @@
         <div class="col centered">
           <q-btn-group>
             <ledstripselect />
-            <q-btn color="dark" icon="sync" @click="callGetLedStrips()" />
             <q-btn
               :color="variantEdit"
               icon="edit"

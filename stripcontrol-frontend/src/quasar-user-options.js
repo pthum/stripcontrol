@@ -6,6 +6,7 @@ import { Notify } from "quasar";
 export default {
   config: {
     iconSet: iconSet,
+    dark: "auto",
   },
   plugins: {
     Notify,
