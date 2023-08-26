@@ -24,9 +24,6 @@ node {
     }
 
     stage("deploy") {
-      def hasDeplCfg = buildUtil.hasBranchDeployConfiguration()
-      def ismain = buildUtil.isMainBranch(env.BRANCH_NAME)
-      println("hasDeployCfg? $hasDeplCfg ismain? $ismain deployParam? ${params.deployParam} deploy? $deploy")
       if(buildUtil.hasBranchDeployConfiguration() && deploy){
         buildUtil.deployImageRemotely(serviceName, tag)
       }
