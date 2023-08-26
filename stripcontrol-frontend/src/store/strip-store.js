@@ -10,7 +10,9 @@ export default {
   mutations: {
     /** update the backend strips */
     updateBackendStrips(state, loadedLedStrips) {
-      state.backendStrips = loadedLedStrips.sort((a,b) => a.name.localeCompare(b.name));
+      state.backendStrips = loadedLedStrips.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
     },
     /** update the LED strip, expects an object containing a field with type and a field with name object
      * containing the object */
@@ -21,7 +23,7 @@ export default {
       if (stripEvent === "undefined" || stripEvent.stripId === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === stripEvent.stripId
       );
       if (objIdx >= 0) {
@@ -38,7 +40,7 @@ export default {
       if (updatedEntry === "undefined" || updatedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === updatedEntry.id
       );
       if (objIdx < 0) {
@@ -51,7 +53,7 @@ export default {
       if (removedEntry === "undefined" || removedEntry.id === "undefined") {
         return;
       }
-      var objIdx = state.backendStrips.findIndex(
+      let objIdx = state.backendStrips.findIndex(
         (obj) => obj.id === removedEntry.id
       );
       if (objIdx >= 0) {

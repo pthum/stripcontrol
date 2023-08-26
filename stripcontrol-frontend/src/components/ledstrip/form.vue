@@ -1,13 +1,13 @@
 <template>
   <div class="led-strip">
-    <h4 v-if="typeof currentStrip.id !== 'undefined'" align="center">
+    <h4 class="centered" v-if="typeof currentStrip.id !== 'undefined'">
       Edit &quot;{{ currentStrip.name }}&quot;({{ currentStrip.id }})
       <remove-modal
         :removalText="`Really Remove LED Strip  ${currentStrip.name} ?`"
         :deleteEntry="deleteEntry"
       />
     </h4>
-    <h4 align="center" v-else>Create LED Strip</h4>
+    <h4 class="centered" v-else>Create LED Strip</h4>
     <div class="q-pa-md">
       <q-form @submit="saveEntry" class="q-gutter-md">
         <div class="row">
@@ -44,7 +44,7 @@
               label="MISO Pin"
               :rules="[(currentPin) => pinValid(currentPin) || 'Invalid Pin']"
             >
-              <template v-slot:append>
+              <template #append>
                 <q-icon name="info" @click="pinout = true" />
               </template>
             </q-input>
@@ -60,7 +60,7 @@
               label="SCLK Pin"
               :rules="[(currentPin) => pinValid(currentPin) || 'Invalid Pin']"
             >
-              <template v-slot:append>
+              <template #append>
                 <q-icon name="info" @click="pinout = true" />
               </template>
             </q-input>
@@ -90,7 +90,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col" align="center">
+          <div class="col centered">
             <div>
               <q-btn
                 color="positive"
@@ -125,7 +125,7 @@
             fit="fill"
           />
         </q-card-section>
-        <q-card-actions align="right">
+        <q-card-actions>
           <q-btn flat label="OK" color="primary" v-close-popup></q-btn>
         </q-card-actions>
       </q-card>
@@ -156,22 +156,19 @@ export default {
     },
     /* indicates, whether the form can be submitted (create or update) */
     writable() {
-      if (
+      return (
         this.textValid(this.currentStrip.name) &&
         this.pinValid(this.currentStrip.misoPin) &&
         this.pinValid(this.currentStrip.sclkPin) &&
         this.ledsValid(this.currentStrip.numLeds)
-      ) {
-        return true;
-      }
-      return false;
+      );
     },
     ...mapGetters(["findLedStrip"]),
   },
   methods: {
     /** save an entry, will do an update if id is set, create otherwise */
     saveEntry() {
-      var obj = new StoreStrip(
+      let obj = new StoreStrip(
         this.currentStrip.name,
         this.currentStrip.description,
         this.currentStrip.misoPin,
@@ -190,7 +187,7 @@ export default {
       return value.length > 0 ? true : false;
     },
     pinValid(pin) {
-      var currentPin = parseInt(pin, 10);
+      let currentPin = parseInt(pin, 10);
       return currentPin >= 0 && currentPin <= 27 ? true : false;
     },
     ledsValid(leds) {
@@ -198,28 +195,9 @@ export default {
     },
     /** delete an entry */
     deleteEntry() {
-      var obj = { id: this.currentStrip.id, name: this.currentStrip.name };
+      let obj = { id: this.currentStrip.id, name: this.currentStrip.name };
       ApiManager.deleteLedStrip(this, obj);
     },
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
