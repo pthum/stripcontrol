@@ -4,25 +4,21 @@
       <div class="row">
         <div class="col centered">
           <q-btn-group>
-            <colorprofileselect :preselected="storeSelectedProfile.id" />
-            <q-btn
-              :color="variantEdit"
-              :disabled="disabledEdit"
-              @click="toggle(false)"
-              icon="edit"
+            <colorprofileselect
+              :preselected="storeSelectedProfile.id"
+              :addNew="true"
             />
-            <q-btn
-              :color="variantCreate"
-              :disabled="disabledCreate"
-              @click="toggle(true)"
-              icon="add_box"
+            <remove-modal
+              v-if="storeSelectedProfile.id"
+              :removalText="`Really Remove Profile ${storeSelectedProfile.id}?`"
+              :deleteEntry="deleteEntry"
             />
           </q-btn-group>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <colorprofileform formProfileName="editableProfile" />
+          <colorprofileform formProfileName="selectedProfile" />
         </div>
       </div>
     </div>
@@ -33,6 +29,7 @@
 import ApiManager from "@/api/manager";
 import colorprofileform from "@/components/colorprofile/form";
 import colorprofileselect from "@/components/colorprofile/select";
+import RemoveModal from "@/components/removeModal";
 import EventBus from "@/utils/eventbus";
 import { Ui, EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
@@ -42,18 +39,15 @@ export default {
   components: {
     colorprofileform,
     colorprofileselect,
+    RemoveModal,
   },
   created() {
     this.callGetColorProfiles();
     this.toggle(true);
-    this.disabledEdit = true;
   },
   data() {
     return {
       variantEdit: Ui.getVariant(false),
-      variantCreate: Ui.getVariant(false),
-      disabledEdit: false,
-      disabledCreate: false,
     };
   },
   computed: {
@@ -65,25 +59,20 @@ export default {
     callGetColorProfiles() {
       ApiManager.callGetColorProfiles(this);
     },
+    /** delete an entry */
+    deleteEntry() {
+      let obj = { id: this.storeSelectedProfile.id };
+      ApiManager.deleteColorProfile(this, obj);
+    },
     toggle(isCreate) {
       if (isCreate) {
-        this.resetStoreProfile({ type: "editableProfile" });
+        this.resetStoreProfile({ type: "selectedProfile" });
       } else {
         this.updateStoreProfile({
-          type: "editableProfile",
+          type: "selectedProfile",
           object: this.storeSelectedProfile,
         });
       }
-      this.toggleCreateElements(isCreate);
-      this.toggleEditElements(!isCreate);
-    },
-    toggleCreateElements(isEnabled) {
-      this.variantCreate = Ui.getVariant(isEnabled);
-      this.disabledCreate = isEnabled;
-    },
-    toggleEditElements(isEnabled) {
-      this.variantEdit = Ui.getVariant(isEnabled);
-      this.disabledEdit = isEnabled;
     },
     /** set the saved object as selected profile, update the colorprofiles, inform user  */
     handleCPSave(event) {
@@ -103,15 +92,15 @@ export default {
       EventBus.makeToast(this, event);
     },
     handleCPSelect(event) {
-      this.updateStoreProfile({
-        type: "selectedProfile",
-        object: event.object,
-      });
-      this.toggle(false);
-    },
-    handleCPGetAll(event) {
-      if (event.object.length === 0) {
-        this.disabledEdit = true;
+      if (typeof event.object === "undefined") {
+        this.toggle(true);
+        this.resetStoreProfile({ type: "selectedProfile" });
+      } else {
+        this.updateStoreProfile({
+          type: "selectedProfile",
+          object: event.object,
+        });
+        this.toggle(false);
       }
     },
     ...mapMutations({
@@ -126,7 +115,6 @@ export default {
     EventBus.$on(EventType.CP_UPDATE, this.handleCPSave);
     EventBus.$on(EventType.CP_DELETE, this.handleCPDelete);
     EventBus.$on(EventType.CP_SELECT, this.handleCPSelect);
-    EventBus.$on(EventType.CP_GETALL, this.handleCPGetAll);
   },
   beforeUnmount() {
     EventBus.$off(EventType.CP_CREATE, this.handleCPSave);

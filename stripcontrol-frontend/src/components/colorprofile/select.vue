@@ -1,20 +1,34 @@
 <template>
   <q-btn-dropdown :label="stringSelected" v-model="menuState">
-    <q-list>
+    <q-list v-if="storedBackendProfiles.length === 0">
       <q-item
-        v-if="storedBackendProfiles.length === 0"
-        disabled
+        v-if="addNewOption"
         clickable
         v-close-popup
-        @click="onItemClick"
+        @click="handleSelectNew()"
       >
+        <q-item-section>
+          <q-item-label>Add new profile</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item disabled clickable v-close-popup @click="onItemClick">
         <q-item-section>
           <q-item-label> No profiles available </q-item-label>
         </q-item-section>
       </q-item>
-
+    </q-list>
+    <q-list v-else>
       <q-item
-        v-else
+        v-if="addNewOption"
+        clickable
+        v-close-popup
+        @click="handleSelectNew()"
+      >
+        <q-item-section>
+          <q-item-label>Add new profile</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item
         v-for="profile in storedBackendProfiles"
         :key="profile.id"
         clickable
@@ -43,7 +57,7 @@ import { EventType } from "@/utils/constant-config";
 
 export default {
   name: "colorprofile-select",
-  props: ["selectId", "preselected"],
+  props: ["selectId", "preselected", "addNew"],
   created() {
     this.id = this.preselected;
   },
@@ -54,11 +68,16 @@ export default {
     };
   },
   computed: {
+    addNewOption() {
+      return this.addNew === true;
+    },
     selected() {
       return this.getColorProfileById(this.id);
     },
     stringSelected() {
-      if (
+      if (this.id === null) {
+        return "New Profile";
+      } else if (
         typeof this.selected === "undefined" ||
         typeof this.selected.id === "undefined"
       ) {
@@ -68,7 +87,12 @@ export default {
         typeof this.selected.brightness !== "undefined"
           ? this.selected.brightness
           : 0;
-      return this.getHexColor(this.selected) + ", \u2600:" + brightness;
+      return (
+        this.getHexColor(this.selected) +
+        ", \u2600:" +
+        brightness +
+        ` (id: ${this.selected.id})`
+      );
     },
     ...mapGetters({
       storedBackendProfiles: "backendProfiles",
@@ -83,6 +107,10 @@ export default {
         stripId: this.selectId,
         type: "selectProfile",
       });
+    },
+    handleSelectNew() {
+      this.id = null;
+      EventBus.$emit(EventType.CP_SELECT, { type: "selectProfile" });
     },
     getHexColor(profile) {
       return colorhelper.rgbToHex(profile);

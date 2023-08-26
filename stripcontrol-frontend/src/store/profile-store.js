@@ -3,7 +3,6 @@ import { StoreProfile } from "@/models/storeprofile";
 export default {
   state: {
     backendProfiles: [],
-    editableProfile: new StoreProfile(255, 255, 255, 0),
     selectedProfile: new StoreProfile(255, 255, 255, 0),
   },
   mutations: {
@@ -47,7 +46,6 @@ export default {
   },
   getters: {
     backendProfiles: (state) => state.backendProfiles,
-    editableProfile: (state) => state.editableProfile,
     selectedProfile: (state) => state.selectedProfile,
     findColorProfile: (state) => (formName) => {
       return state[formName];

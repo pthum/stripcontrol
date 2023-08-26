@@ -1,15 +1,5 @@
 <template>
   <div class="color-profile">
-    <p></p>
-    <h4 class="centered" v-if="typeof currentProfile.id !== 'undefined'">
-      Edit Profile {{ currentProfile.id }}
-
-      <remove-modal
-        :removalText="`Really Remove Profile ${currentProfile.id}?`"
-        :deleteEntry="deleteEntry"
-      />
-    </h4>
-    <h4 class="centered" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
       <q-form @submit="saveEntry" class="q-gutter-md">
         <div class="row">
@@ -85,15 +75,12 @@
 import colorhelper from "@/utils/colorhelper";
 import ApiManager from "@/api/manager";
 import { mapMutations, mapGetters } from "vuex";
-import RemoveModal from "@/components/removeModal";
 import { StoreProfile } from "@/models/storeprofile";
 
 export default {
   name: "colorprofile-form",
   props: ["formProfileName"],
-  components: {
-    RemoveModal,
-  },
+  components: {},
   computed: {
     currentProfile() {
       return this.findColorProfile(this.formProfileName);
