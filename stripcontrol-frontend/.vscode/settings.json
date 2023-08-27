@@ -1,0 +1,11 @@
+{
+    "files.eol": "\n",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "eslint.options": {
+      "configFile": ".eslintrc.js",
+    },
+    "eslint.format.enable": true,
+    "eslint.debug": true,
+  }
