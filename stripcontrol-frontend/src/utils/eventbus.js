@@ -1,8 +1,9 @@
 import emitter from "tiny-emitter/instance";
+import { Notify } from "quasar";
 class EventBusClz {
   /** makes a toast, expects an object with content field and variant field */
-  makeToast(vm, toastData) {
-    vm.$q.notify(toastData);
+  makeToast(toastData) {
+    Notify.create(toastData);
   }
   $on(...args) {
     emitter.on(...args);

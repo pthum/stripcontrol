@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fff">
-    <q-header elevated class="bg-black text-white" height-hint="98">
+    <q-header elevated height-hint="98">
       <q-toolbar>
         <q-tabs align="left">
           <q-route-tab to="/" label="Home" />
@@ -8,7 +8,8 @@
           <q-route-tab to="/ledstripservice" label="LED Strips" />
         </q-tabs>
         <q-space></q-space>
-        <q-btn icon="light_mode" @click="toggleLight()"></q-btn>
+        <q-btn color="light_mode" icon="sync" @click="refresh()"></q-btn>
+        <q-btn icon="light_mode" @click="$q.dark.toggle()"></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -18,23 +19,10 @@
   </q-layout>
 </template>
 
-<script>
-import { ref } from "vue";
-
-export default {
-  name: "LayoutDefault",
-
-  components: {},
-
-  setup() {
-    return {
-      leftDrawerOpen: ref(false),
-    };
-  },
-  methods: {
-    toggleLight() {
-      this.$q.dark.toggle();
-    },
-  },
-};
+<script setup>
+import ApiManager from "@/api/manager";
+function refresh() {
+  ApiManager.callGetColorProfiles();
+  ApiManager.callGetLedStrips();
+}
 </script>

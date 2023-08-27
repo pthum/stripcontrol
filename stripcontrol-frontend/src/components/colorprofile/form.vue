@@ -1,17 +1,7 @@
 <template>
   <div class="color-profile">
-    <p></p>
-    <h4 class="centered" v-if="typeof currentProfile.id !== 'undefined'">
-      Edit Profile {{ currentProfile.id }}
-
-      <remove-modal
-        :removalText="`Really Remove Profile ${currentProfile.id}?`"
-        :deleteEntry="deleteEntry"
-      />
-    </h4>
-    <h4 class="centered" v-else>Create Color Profile</h4>
     <div class="q-pa-md">
-      <q-form @submit="saveEntry" class="q-gutter-md">
+      <q-form @submit="saveEntry" class="q-gutter-md" ref="profilecreateform">
         <div class="row">
           <div class="col">
             <q-item>
@@ -62,107 +52,89 @@
             </q-card>
           </div>
         </div>
-        <div class="row">
-          <div class="col centered">
-            <q-btn
-              color="positive"
-              type="submit"
-              v-if="typeof currentProfile.id !== 'undefined'"
-              icon="edit"
-              >Edit {{ currentProfile.id }}</q-btn
-            >
-            <q-btn color="positive" type="submit" v-else icon="add_box"
-              >Create</q-btn
-            >
-          </div>
-        </div>
       </q-form>
     </div>
   </div>
 </template>
 
-<script>
-import colorhelper from "@/utils/colorhelper";
+<script setup>
 import ApiManager from "@/api/manager";
-import { mapMutations, mapGetters } from "vuex";
-import RemoveModal from "@/components/removeModal";
+import colorhelper from "@/utils/colorhelper";
 import { StoreProfile } from "@/models/storeprofile";
+import {
+  computed,
+  defineProps,
+  defineEmits,
+  defineExpose,
+  ref,
+  watch,
+} from "vue";
+import { useStore } from "vuex";
+const props = defineProps({
+  formProfileName: Number,
+  formValid: Boolean,
+});
 
+const emit = defineEmits(["update:formValid"]);
+const profilecreateform = ref(null);
+defineExpose({
+  profilecreateform,
+});
+const store = useStore();
+const currentProfile = computed(() =>
+  store.getters.findColorProfile(props.formProfileName)
+);
+
+watch(
+  currentProfile,
+  (newVal, oldVal) => {
+    console.log("selected profile mutated");
+    let res = true;
+    emit("update:formValid", res);
+  },
+  { deep: true }
+);
+
+const color = computed({
+  get() {
+    return colorhelper.rgbToHex(currentProfile.value);
+  },
+  set(value) {
+    let result = colorhelper.hexToRgb(value);
+    let obj = new StoreProfile(
+      result.r,
+      result.g,
+      result.b,
+      currentProfile.value.brightness,
+      currentProfile.value.id
+    );
+    store.commit("updateColorProfile", {
+      type: props.formProfileName,
+      object: obj,
+    });
+  },
+});
+const styleBg = computed(() => `background: ${color.value}`);
+
+/** save an entry, will do an update if id is set, create otherwise */
+function saveEntry() {
+  let obj = new StoreProfile(
+    currentProfile.value.red,
+    currentProfile.value.green,
+    currentProfile.value.blue,
+    currentProfile.value.brightness,
+    currentProfile.value.id
+  );
+  if (typeof currentProfile.value.id !== "undefined") {
+    ApiManager.updateColorProfile(obj);
+  } else {
+    ApiManager.createColorProfile(obj);
+  }
+}
+</script>
+<script>
 export default {
   name: "colorprofile-form",
-  props: ["formProfileName"],
-  components: {
-    RemoveModal,
-  },
-  computed: {
-    currentProfile() {
-      return this.findColorProfile(this.formProfileName);
-    },
-    color: {
-      get() {
-        return colorhelper.rgbToHex(this.currentProfile);
-      },
-      set(value) {
-        this.handleColorHex(value);
-      },
-    },
-    styleBg() {
-      return "background: " + this.color;
-    },
-    hexVal() {
-      return colorhelper.rgbToHex(this.currentProfile);
-    },
-    ...mapGetters(["findColorProfile"]),
-  },
-  methods: {
-    /** handles an update of hex value */
-    handleColorHex(hexValue) {
-      let result = colorhelper.hexToRgb(hexValue);
-
-      let obj = new StoreProfile(
-        result.r,
-        result.g,
-        result.b,
-        this.currentProfile.brightness,
-        this.currentProfile.id
-      );
-      this.updateStoreProfile({ type: this.formProfileName, object: obj });
-    },
-    /** handles an update of brightness */
-    handleBrightness(value) {
-      let obj = new StoreProfile(
-        this.currentProfile.red,
-        this.currentProfile.green,
-        this.currentProfile.blue,
-        Number(value),
-        this.currentProfile.id
-      );
-      this.updateStoreProfile({ type: this.formProfileName, object: obj });
-    },
-    /** save an entry, will do an update if id is set, create otherwise */
-    saveEntry() {
-      let obj = new StoreProfile(
-        this.currentProfile.red,
-        this.currentProfile.green,
-        this.currentProfile.blue,
-        this.currentProfile.brightness,
-        this.currentProfile.id
-      );
-      if (typeof this.currentProfile.id !== "undefined") {
-        ApiManager.updateColorProfile(this, obj);
-      } else {
-        ApiManager.createColorProfile(this, obj);
-      }
-    },
-    /** delete an entry */
-    deleteEntry() {
-      let obj = { id: this.currentProfile.id };
-      ApiManager.deleteColorProfile(this, obj);
-    },
-    ...mapMutations({
-      updateStoreProfile: "updateColorProfile",
-    }),
-  },
 };
 </script>
 

@@ -2,10 +2,11 @@
   <q-btn
     @click="test = true"
     align="right"
-    color="negative"
+    :color="isBtnActive ? 'negative' : 'primary'"
     icon="delete"
     size="lg"
     flat
+    :disabled="!isBtnActive"
   ></q-btn>
   <q-dialog
     id="modal-remove-item"
@@ -20,34 +21,27 @@
       </q-card-section>
       <q-separator></q-separator>
       <q-card-actions align="right">
-        <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+        <q-btn flat label="Cancel" color="secondary" v-close-popup></q-btn>
         <q-btn
           label="Remove!"
           color="negative"
           v-close-popup
-          @click="deleteEntry"
+          @click="executeDelete"
         ></q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
-<script>
-export default {
-  name: "remove-modal",
-  props: ["removalText", "deleteEntry"],
-  data() {
-    return {
-      pinout: false,
-      test: false,
-    };
-  },
-
-  methods: {
-    /** delete an entry */
-    executeDelete() {
-      this.deleteEntry();
-    },
-  },
-};
+<script setup>
+import { ref, defineProps } from "vue";
+const props = defineProps({
+  removalText: String,
+  deleteEntryFn: Function,
+  isBtnActive: Boolean,
+});
+const test = ref(false);
+function executeDelete() {
+  props.deleteEntryFn();
+}
 </script>
