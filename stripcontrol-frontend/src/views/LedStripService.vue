@@ -4,25 +4,30 @@
       <div class="row">
         <div class="col centered">
           <q-btn-group>
-            <ledstripselect />
-            <q-btn
-              :color="variantEdit"
-              icon="edit"
-              :disabled="disabledEdit"
-              @click="toggle(false)"
+            <ledstripselect :addNew="true" />
+            <remove-modal
+              :removalText="`Really Remove LED Strip  ${storeSelectedStrip.name} ?`"
+              :deleteEntryFn="deleteEntry"
+              :isBtnActive="storeSelectedStrip.id"
             />
             <q-btn
-              :color="variantCreate"
-              icon="add_box"
-              :disabled="disabledCreate"
-              @click="toggle(true)"
-            />
+              @click="submitStripForm()"
+              align="right"
+              :color="storeSelectedStrip.id ? 'secondary' : 'primary'"
+              :icon="storeSelectedStrip.id ? 'edit' : 'add'"
+              size="lg"
+              flat
+              :disabled="!isFormValid"
+            ></q-btn>
           </q-btn-group>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <ledstripform formStripName="editableStrip" />
+          <ledstripform
+            ref="stripformcomponent"
+            formStripName="selectedStrip"
+          />
         </div>
       </div>
     </div>
@@ -34,26 +39,24 @@ import ApiManager from "@/api/manager";
 import ledstripform from "@/components/ledstrip/form";
 import ledstripselect from "@/components/ledstrip/select";
 import EventBus from "@/utils/eventbus";
-import { Ui, EventType } from "@/utils/constant-config";
+import { EventType } from "@/utils/constant-config";
 import { mapMutations, mapGetters } from "vuex";
+import RemoveModal from "@/components/removeModal";
 
 export default {
   name: "led-strip-service",
   components: {
     ledstripform,
     ledstripselect,
+    RemoveModal,
   },
   created() {
     this.callGetLedStrips();
     this.toggle(true);
-    this.disabledEdit = true;
   },
   data() {
     return {
-      variantEdit: Ui.getVariant(false),
-      variantCreate: Ui.getVariant(false),
-      disabledEdit: false,
-      disabledCreate: false,
+      // isFormValid: false,
     };
   },
   computed: {
@@ -66,34 +69,38 @@ export default {
         this.toggle(false);
       },
     },
+    isFormValid() {
+      return this.$refs?.stripformcomponent?.$computed?.writable;
+    },
     ...mapGetters({
       storeSelectedStrip: "selectedStrip",
     }),
   },
   methods: {
+    submitStripForm() {
+      this.$refs.stripformcomponent.$refs.stripcreateform.submit();
+    },
     /** Fetches strips when the component is created. */
     callGetLedStrips() {
       ApiManager.callGetLedStrips(this);
     },
     toggle(isCreate) {
       if (isCreate) {
-        this.resetStoreStrip({ type: "editableStrip" });
+        this.resetStoreStrip({ type: "selectedStrip" });
       } else {
         this.updateStoreStrip({
-          type: "editableStrip",
+          type: "selectedStrip",
           object: this.storeSelectedStrip,
         });
       }
-      this.toggleCreateElements(isCreate);
-      this.toggleEditElements(!isCreate);
     },
-    toggleCreateElements(isEnabled) {
-      this.variantCreate = Ui.getVariant(isEnabled);
-      this.disabledCreate = isEnabled;
-    },
-    toggleEditElements(isEnabled) {
-      this.variantEdit = Ui.getVariant(isEnabled);
-      this.disabledEdit = isEnabled;
+    /** delete an entry */
+    deleteEntry() {
+      let obj = {
+        id: this.storeSelectedStrip.id,
+        name: this.storeSelectedStrip.name,
+      };
+      ApiManager.deleteLedStrip(this, obj);
     },
     /** set the created object as selected strip, update the led strips, inform user  */
     handleLSSave(event) {
@@ -110,14 +117,15 @@ export default {
       EventBus.makeToast(this, event);
     },
     handleLSSelect(event) {
-      this.updateStoreStrip({ type: "selectedStrip", object: event.object });
-      this.toggle(false);
-    },
-    handleLSGetAll(event) {
-      if (event.object.length === 0) {
-        this.disabledEdit = true;
+      if (typeof event.object === "undefined") {
+        this.toggle(true);
+        this.resetStoreStrip({ type: "selectedStrip" });
+      } else {
+        this.updateStoreStrip({ type: "selectedStrip", object: event.object });
+        this.toggle(false);
       }
     },
+    handleLSGetAll() {},
     ...mapMutations({
       updateStoreStrip: "updateLedStrip",
       resetStoreStrip: "resetLedStrip",

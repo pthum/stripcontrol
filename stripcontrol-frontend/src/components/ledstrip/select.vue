@@ -1,35 +1,47 @@
 <template>
-  <div class="ledStripSeelect">
-    <q-btn-dropdown :label="stringSelected" v-model="menuState">
-      <q-list>
-        <q-item
-          v-if="storedBackendStrips.length === 0"
-          disabled
-          clickable
-          v-close-popup
-          @click="onItemClick"
-        >
-          <q-item-section>
-            <q-item-label> No strips available </q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item
-          v-else
-          v-for="strip in storedBackendStrips"
-          :key="strip.id"
-          clickable
-          @click="handleSelection(strip)"
-        >
-          <q-item-section>
-            <q-item-label>
-              {{ strip.name }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
-  </div>
+  <q-btn-dropdown :label="stringSelected" v-model="menuState">
+    <q-list v-if="storedBackendStrips.length === 0">
+      <q-item
+        v-if="addNewOption"
+        clickable
+        v-close-popup
+        @click="handleSelectNew()"
+      >
+        <q-item-section>
+          <q-item-label>Add new strip</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item disabled clickable v-close-popup @click="onItemClick">
+        <q-item-section>
+          <q-item-label> No strips available </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
+    <q-list v-else>
+      <q-item
+        v-if="addNewOption"
+        clickable
+        v-close-popup
+        @click="handleSelectNew()"
+      >
+        <q-item-section>
+          <q-item-label>Add new strip</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-for="strip in storedBackendStrips"
+        :key="strip.id"
+        clickable
+        @click="handleSelection(strip)"
+      >
+        <q-item-section>
+          <q-item-label>
+            {{ strip.name }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-btn-dropdown>
 </template>
 
 <script>
@@ -39,7 +51,7 @@ import { EventType } from "@/utils/constant-config";
 
 export default {
   name: "ledstrip-select",
-  props: ["selectStripName", "preselected"],
+  props: ["selectStripName", "preselected", "addNew"],
   created() {
     this.id = this.preselected;
   },
@@ -53,14 +65,19 @@ export default {
     selected() {
       return this.storedBackendStrips.find((profile) => profile.id === this.id);
     },
+    addNewOption() {
+      return this.addNew === true;
+    },
     stringSelected: function () {
-      if (
+      if (this.id === null) {
+        return "New Strip";
+      } else if (
         typeof this.selected === "undefined" ||
         typeof this.selected.id === "undefined"
       ) {
         return "Select strip";
       }
-      return this.selected.name;
+      return this.selected.name + ` (id: ${this.selected.id})`;
     },
     ...mapGetters({
       storedBackendStrips: "backendStrips",
@@ -74,6 +91,10 @@ export default {
         object: strip,
         type: this.selectStripName,
       });
+    },
+    handleSelectNew() {
+      this.id = null;
+      EventBus.$emit(EventType.LS_SELECT, { type: this.selectStripName });
     },
     handleLSCreate(event) {
       if (

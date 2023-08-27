@@ -2,10 +2,11 @@
   <q-btn
     @click="test = true"
     align="right"
-    color="negative"
+    :color="isBtnActive ? 'negative' : 'primary'"
     icon="delete"
     size="lg"
     flat
+    :disabled="!isBtnActive"
   ></q-btn>
   <q-dialog
     id="modal-remove-item"
@@ -25,7 +26,7 @@
           label="Remove!"
           color="negative"
           v-close-popup
-          @click="deleteEntry"
+          @click="deleteEntryFn"
         ></q-btn>
       </q-card-actions>
     </q-card>
@@ -35,10 +36,9 @@
 <script>
 export default {
   name: "remove-modal",
-  props: ["removalText", "deleteEntry"],
+  props: ["removalText", "deleteEntryFn", "isBtnActive"],
   data() {
     return {
-      pinout: false,
       test: false,
     };
   },
@@ -46,7 +46,7 @@ export default {
   methods: {
     /** delete an entry */
     executeDelete() {
-      this.deleteEntry();
+      this.deleteEntryFn();
     },
   },
 };

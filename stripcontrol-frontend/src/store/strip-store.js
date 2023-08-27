@@ -4,8 +4,7 @@ import { StoreStrip } from "@/models/storestrip";
 export default {
   state: {
     backendStrips: [],
-    editableStrip: new StoreStrip("", "", 0, 0, 30, 8000000),
-    selectedStrip: {},
+    selectedStrip: new StoreStrip("", "", 0, 0, 30, 8000000),
   },
   mutations: {
     /** update the backend strips */
@@ -63,7 +62,6 @@ export default {
   },
   getters: {
     backendStrips: (state) => state.backendStrips,
-    editableStrip: (state) => state.editableStrip,
     selectedStrip: (state) => state.selectedStrip,
     findLedStrip: (state) => (formName) => {
       return state[formName];

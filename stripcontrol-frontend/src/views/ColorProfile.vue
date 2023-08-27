@@ -9,9 +9,9 @@
               :addNew="true"
             />
             <remove-modal
-              v-if="storeSelectedProfile.id"
               :removalText="`Really Remove Profile ${storeSelectedProfile.id}?`"
-              :deleteEntry="deleteEntry"
+              :deleteEntryFn="deleteEntry"
+              :isBtnActive="storeSelectedProfile.id"
             />
           </q-btn-group>
         </div>

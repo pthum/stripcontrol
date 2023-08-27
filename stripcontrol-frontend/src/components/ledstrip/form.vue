@@ -1,15 +1,7 @@
 <template>
   <div class="led-strip">
-    <h4 class="centered" v-if="typeof currentStrip.id !== 'undefined'">
-      Edit &quot;{{ currentStrip.name }}&quot;({{ currentStrip.id }})
-      <remove-modal
-        :removalText="`Really Remove LED Strip  ${currentStrip.name} ?`"
-        :deleteEntry="deleteEntry"
-      />
-    </h4>
-    <h4 class="centered" v-else>Create LED Strip</h4>
     <div class="q-pa-md">
-      <q-form @submit="saveEntry" class="q-gutter-md">
+      <q-form @submit="saveEntry" class="q-gutter-md" ref="stripcreateform">
         <div class="row">
           <div class="col col-sm=9">
             <q-input
@@ -83,29 +75,6 @@
             />
           </div>
         </div>
-        <div class="row">
-          <div class="col centered">
-            <div>
-              <q-btn
-                color="secondary"
-                type="submit"
-                v-if="typeof currentStrip.id !== 'undefined'"
-                icon="edit"
-                :disable="writable === false"
-                >Edit &quot;{{ currentStrip.name }}&quot;
-              </q-btn>
-              <q-btn
-                color="secondary"
-                :disable="writable === false"
-                icon="add-box"
-                type="submit"
-                v-else
-              >
-                Create
-              </q-btn>
-            </div>
-          </div>
-        </div>
       </q-form>
     </div>
 
@@ -130,34 +99,39 @@
 <script>
 import ApiManager from "@/api/manager";
 import { mapGetters } from "vuex";
-import RemoveModal from "@/components/removeModal";
 import { StoreStrip } from "@/models/storestrip";
 
 export default {
   name: "ledstrip-form",
   props: ["formStripName"],
-  components: {
-    RemoveModal,
-  },
+  components: {},
   data() {
     return {
       pinout: false,
     };
   },
   computed: {
-    currentStrip() {
-      return this.findLedStrip(this.formStripName);
+    currentStrip: {
+      get() {
+        return this.storeSelectedStrip;
+      },
+      set(value) {
+        this.updateStoreStrip({ type: "selectedStrip", object: value });
+        this.toggle(false);
+      },
     },
     /* indicates, whether the form can be submitted (create or update) */
     writable() {
-      return (
+      let res =
         this.textValid(this.currentStrip.name) &&
         this.pinValid(this.currentStrip.misoPin) &&
         this.pinValid(this.currentStrip.sclkPin) &&
-        this.ledsValid(this.currentStrip.numLeds)
-      );
+        this.ledsValid(this.currentStrip.numLeds);
+      return res;
     },
-    ...mapGetters(["findLedStrip"]),
+    ...mapGetters({
+      storeSelectedStrip: "selectedStrip",
+    }),
   },
   methods: {
     /** save an entry, will do an update if id is set, create otherwise */
@@ -186,11 +160,6 @@ export default {
     },
     ledsValid(leds) {
       return parseInt(leds, 10) > 0 ? true : false;
-    },
-    /** delete an entry */
-    deleteEntry() {
-      let obj = { id: this.currentStrip.id, name: this.currentStrip.name };
-      ApiManager.deleteLedStrip(this, obj);
     },
   },
 };
