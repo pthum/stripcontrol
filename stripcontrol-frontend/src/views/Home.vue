@@ -43,52 +43,43 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import colorprofileselect from "@/components/colorprofile/select";
 import ApiManager from "@/api/manager";
 import EventBus from "@/utils/eventbus";
 import { EventType } from "@/utils/constant-config";
-import { mapMutations, mapGetters } from "vuex";
+import { useStore } from "vuex";
+import { computed, onMounted, onBeforeUnmount } from "vue";
 
+const store = useStore();
+const storedBackendStrips = computed(() => store.getters.backendStrips);
+
+function refresh() {
+  ApiManager.callGetColorProfiles(this);
+  ApiManager.callGetLedStrips(this);
+}
+/** enable/disable strip */
+function toggleEnabled(strip) {
+  strip.enabled = !strip.enabled;
+  ApiManager.updateLedStrip(this, strip);
+}
+/** handle selection of a color profile */
+function handleCPSelect(event) {
+  ApiManager.updateStripProfile(this, {
+    stripId: event.stripId,
+    profile: event.object,
+  });
+}
+onMounted(() => {
+  EventBus.$on(EventType.CP_SELECT, handleCPSelect);
+});
+onBeforeUnmount(() => {
+  EventBus.$off(EventType.CP_SELECT, handleCPSelect);
+});
+refresh();
+</script>
+<script>
 export default {
   name: "strip-control-service",
-  components: {
-    colorprofileselect,
-  },
-  created() {
-    this.refresh();
-  },
-  computed: {
-    ...mapGetters({
-      storedBackendStrips: "backendStrips",
-    }),
-  },
-  methods: {
-    refresh() {
-      ApiManager.callGetColorProfiles(this);
-      ApiManager.callGetLedStrips(this);
-    },
-    /** enable/disable strip */
-    toggleEnabled(strip) {
-      strip.enabled = !strip.enabled;
-      ApiManager.updateLedStrip(this, strip);
-    },
-    /** handle selection of a color profile */
-    handleCPSelect(event) {
-      ApiManager.updateStripProfile(this, {
-        stripId: event.stripId,
-        profile: event.object,
-      });
-    },
-    ...mapMutations({
-      updateStoreStrip: "updateLedStrip",
-    }),
-  },
-  mounted() {
-    EventBus.$on(EventType.CP_SELECT, this.handleCPSelect);
-  },
-  beforeUnmount() {
-    EventBus.$off(EventType.CP_SELECT, this.handleCPSelect);
-  },
 };
 </script>

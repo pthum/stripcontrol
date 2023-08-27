@@ -26,28 +26,22 @@
           label="Remove!"
           color="negative"
           v-close-popup
-          @click="deleteEntryFn"
+          @click="executeDelete"
         ></q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
-<script>
-export default {
-  name: "remove-modal",
-  props: ["removalText", "deleteEntryFn", "isBtnActive"],
-  data() {
-    return {
-      test: false,
-    };
-  },
-
-  methods: {
-    /** delete an entry */
-    executeDelete() {
-      this.deleteEntryFn();
-    },
-  },
-};
+<script setup>
+import { ref, defineProps } from "vue";
+const props = defineProps({
+  removalText: String,
+  deleteEntryFn: Function,
+  isBtnActive: Boolean,
+});
+const test = ref(false);
+function executeDelete() {
+  props.deleteEntryFn();
+}
 </script>

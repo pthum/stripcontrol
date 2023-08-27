@@ -8,16 +8,16 @@
             <remove-modal
               :removalText="`Really Remove LED Strip  ${storeSelectedStrip.name} ?`"
               :deleteEntryFn="deleteEntry"
-              :isBtnActive="storeSelectedStrip.id"
+              :isBtnActive="typeof storeSelectedStrip.id !== 'undefined'"
             />
             <q-btn
               @click="submitStripForm()"
               align="right"
-              :color="storeSelectedStrip.id ? 'secondary' : 'primary'"
+              :color="fValid ? 'secondary' : 'primary'"
               :icon="storeSelectedStrip.id ? 'edit' : 'add'"
               size="lg"
               flat
-              :disabled="!isFormValid"
+              :disabled="!fValid"
             ></q-btn>
           </q-btn-group>
         </div>
@@ -27,125 +27,104 @@
           <ledstripform
             ref="stripformcomponent"
             formStripName="selectedStrip"
+            :formValid="fValid"
+            @update:formValid="(newValue) => (fValid = newValue)"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script>
+<script setup>
 import ApiManager from "@/api/manager";
 import ledstripform from "@/components/ledstrip/form";
 import ledstripselect from "@/components/ledstrip/select";
+import RemoveModal from "@/components/removeModal";
 import EventBus from "@/utils/eventbus";
 import { EventType } from "@/utils/constant-config";
-import { mapMutations, mapGetters } from "vuex";
-import RemoveModal from "@/components/removeModal";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useStore } from "vuex";
 
-export default {
-  name: "led-strip-service",
-  components: {
-    ledstripform,
-    ledstripselect,
-    RemoveModal,
-  },
-  created() {
-    this.callGetLedStrips();
-    this.toggle(true);
-  },
-  data() {
-    return {
-      // isFormValid: false,
-    };
-  },
-  computed: {
-    selected: {
-      get() {
-        return this.storeSelectedStrip;
-      },
-      set(value) {
-        this.updateStoreStrip({ type: "selectedStrip", object: value });
-        this.toggle(false);
-      },
-    },
-    isFormValid() {
-      return this.$refs?.stripformcomponent?.$computed?.writable;
-    },
-    ...mapGetters({
-      storeSelectedStrip: "selectedStrip",
-    }),
-  },
-  methods: {
-    submitStripForm() {
-      this.$refs.stripformcomponent.$refs.stripcreateform.submit();
-    },
-    /** Fetches strips when the component is created. */
-    callGetLedStrips() {
-      ApiManager.callGetLedStrips(this);
-    },
-    toggle(isCreate) {
-      if (isCreate) {
-        this.resetStoreStrip({ type: "selectedStrip" });
-      } else {
-        this.updateStoreStrip({
-          type: "selectedStrip",
-          object: this.storeSelectedStrip,
-        });
-      }
-    },
-    /** delete an entry */
-    deleteEntry() {
-      let obj = {
-        id: this.storeSelectedStrip.id,
-        name: this.storeSelectedStrip.name,
-      };
-      ApiManager.deleteLedStrip(this, obj);
-    },
-    /** set the created object as selected strip, update the led strips, inform user  */
-    handleLSSave(event) {
-      this.updateStoreStrip({ type: "selectedStrip", object: event.object });
-      this.toggle(false);
-      this.updateLedStripInBackendList(event.object);
-      EventBus.makeToast(this, event);
-    },
-    /** reset the selected strip, update the led strips, inform user */
-    handleLSDelete(event) {
-      this.resetStoreStrip({ type: "selectedStrip" });
-      this.removeLedStripInBackendList(event.object);
-      this.toggle(true);
-      EventBus.makeToast(this, event);
-    },
-    handleLSSelect(event) {
-      if (typeof event.object === "undefined") {
-        this.toggle(true);
-        this.resetStoreStrip({ type: "selectedStrip" });
-      } else {
-        this.updateStoreStrip({ type: "selectedStrip", object: event.object });
-        this.toggle(false);
-      }
-    },
-    handleLSGetAll() {},
-    ...mapMutations({
-      updateStoreStrip: "updateLedStrip",
-      resetStoreStrip: "resetLedStrip",
-      updateLedStripInBackendList: "updateLedStripInBackendList",
-      removeLedStripInBackendList: "removeLedStripInBackendList",
-    }),
-  },
-  mounted() {
-    EventBus.$on(EventType.LS_CREATE, this.handleLSSave);
-    EventBus.$on(EventType.LS_UPDATE, this.handleLSSave);
-    EventBus.$on(EventType.LS_DELETE, this.handleLSDelete);
-    EventBus.$on(EventType.LS_SELECT, this.handleLSSelect);
-    EventBus.$on(EventType.LS_GETALL, this.handleLSGetAll);
-  },
-  beforeUnmount() {
-    EventBus.$off(EventType.LS_CREATE, this.handleLSSave);
-    EventBus.$off(EventType.LS_UPDATE, this.handleLSSave);
-    EventBus.$off(EventType.LS_DELETE, this.handleLSDelete);
-    EventBus.$off(EventType.LS_SELECT, this.handleLSSelect);
-    EventBus.$off(EventType.LS_GETALL, this.handleLSGetAll);
-  },
-};
+const store = useStore();
+const fValid = ref(false);
+const storeSelectedStrip = computed(() => store.getters.selectedStrip);
+const stripformcomponent = ref(null);
+function submitStripForm() {
+  stripformcomponent.value.stripcreateform.submit();
+}
+/** Fetches strips when the component is created. */
+function callGetLedStrips() {
+  ApiManager.callGetLedStrips(this);
+}
+function toggle(isCreate) {
+  if (isCreate) {
+    resetStoreStrip();
+  } else {
+    updateStoreStrip(storeSelectedStrip.value);
+  }
+}
+/** delete an entry */
+function deleteEntry() {
+  let obj = {
+    id: storeSelectedStrip.value.id,
+    name: storeSelectedStrip.value.name,
+  };
+  ApiManager.deleteLedStrip(this, obj);
+}
+/** set the created object as selected strip, update the led strips, inform user  */
+function handleLSSave(event) {
+  updateStoreStrip(event.object);
+  toggle(false);
+  updateLedStripInBackendList(event.object);
+  EventBus.makeToast(this, event);
+}
+/** reset the selected strip, update the led strips, inform user */
+function handleLSDelete(event) {
+  resetStoreStrip();
+  removeLedStripInBackendList(event.object);
+  toggle(true);
+  EventBus.makeToast(this, event);
+}
+function handleLSSelect(event) {
+  if (typeof event.object === "undefined") {
+    toggle(true);
+    resetStoreStrip();
+  } else {
+    updateStoreStrip(event.object);
+    toggle(false);
+  }
+}
+function handleLSGetAll() {}
+
+function updateStoreStrip(obj) {
+  let o = { type: "selectedStrip", object: obj };
+  store.commit("updateLedStrip", o);
+}
+function resetStoreStrip() {
+  store.commit("resetLedStrip", { type: "selectedStrip" });
+}
+function updateLedStripInBackendList(o) {
+  store.commit("updateLedStripInBackendList", o);
+}
+function removeLedStripInBackendList(o) {
+  store.commit("removeLedStripInBackendList", o);
+}
+
+onMounted(() => {
+  EventBus.$on(EventType.LS_CREATE, handleLSSave);
+  EventBus.$on(EventType.LS_UPDATE, handleLSSave);
+  EventBus.$on(EventType.LS_DELETE, handleLSDelete);
+  EventBus.$on(EventType.LS_SELECT, handleLSSelect);
+  EventBus.$on(EventType.LS_GETALL, handleLSGetAll);
+});
+onBeforeUnmount(() => {
+  EventBus.$off(EventType.LS_CREATE, handleLSSave);
+  EventBus.$off(EventType.LS_UPDATE, handleLSSave);
+  EventBus.$off(EventType.LS_DELETE, handleLSDelete);
+  EventBus.$off(EventType.LS_SELECT, handleLSSelect);
+  EventBus.$off(EventType.LS_GETALL, handleLSGetAll);
+});
+
+callGetLedStrips();
+toggle(true);
 </script>

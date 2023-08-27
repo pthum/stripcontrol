@@ -1,6 +1,7 @@
 <template>
   <div class="led-strip">
     <div class="q-pa-md">
+      <h1>{{ props.formValid }}</h1>
       <q-form @submit="saveEntry" class="q-gutter-md" ref="stripcreateform">
         <div class="row">
           <div class="col col-sm=9">
@@ -95,72 +96,89 @@
     </q-dialog>
   </div>
 </template>
-
-<script>
+<script setup>
 import ApiManager from "@/api/manager";
-import { mapGetters } from "vuex";
 import { StoreStrip } from "@/models/storestrip";
+import {
+  ref,
+  computed,
+  defineProps,
+  defineEmits,
+  defineExpose,
+  watch,
+} from "vue";
+import { useStore } from "vuex";
+const emit = defineEmits(["update:formValid"]);
+const props = defineProps({
+  formValid: Boolean,
+});
+const stripcreateform = ref(null);
+defineExpose({
+  stripcreateform,
+});
+const store = useStore();
+const pinout = ref(false);
+const storeSelectedStrip = computed(() => store.getters.selectedStrip);
+const currentStrip = computed({
+  get() {
+    return storeSelectedStrip.value;
+  },
+  set(value) {
+    store.commit("updateLedStrip", { type: "selectedStrip", object: value });
+  },
+});
+function saveEntry() {
+  let obj = new StoreStrip(
+    currentStrip.value.name,
+    currentStrip.value.description,
+    currentStrip.value.misoPin,
+    currentStrip.value.sclkPin,
+    currentStrip.value.numLeds,
+    currentStrip.value.speedHz,
+    currentStrip.value.id
+  );
+  if (typeof currentStrip.value.id !== "undefined") {
+    ApiManager.updateLedStrip(this, obj);
+  } else {
+    ApiManager.createLedStrip(this, obj);
+  }
+}
 
+watch(
+  currentStrip,
+  (newVal, oldVal) => {
+    console.log("selected strip mutated");
+    let res =
+      textValid(newVal.name) &&
+      pinValid(newVal.misoPin) &&
+      pinValid(newVal.sclkPin) &&
+      ledsValid(newVal.numLeds);
+    emit("update:formValid", res);
+  },
+  { deep: true }
+);
+
+// const writable = computed(() => {
+//   let res =
+//     textValid(currentStrip.value.name) &&
+//     pinValid(currentStrip.value.misoPin) &&
+//     pinValid(currentStrip.value.sclkPin) &&
+//     ledsValid(currentStrip.value.numLeds);
+//   return res;
+// });
+function textValid(value) {
+  return value.length > 0 ? true : false;
+}
+function pinValid(pin) {
+  let currentPin = parseInt(pin, 10);
+  return currentPin >= 0 && currentPin <= 27 ? true : false;
+}
+function ledsValid(leds) {
+  return parseInt(leds, 10) > 0 ? true : false;
+}
+</script>
+<script>
 export default {
   name: "ledstrip-form",
-  props: ["formStripName"],
-  components: {},
-  data() {
-    return {
-      pinout: false,
-    };
-  },
-  computed: {
-    currentStrip: {
-      get() {
-        return this.storeSelectedStrip;
-      },
-      set(value) {
-        this.updateStoreStrip({ type: "selectedStrip", object: value });
-        this.toggle(false);
-      },
-    },
-    /* indicates, whether the form can be submitted (create or update) */
-    writable() {
-      let res =
-        this.textValid(this.currentStrip.name) &&
-        this.pinValid(this.currentStrip.misoPin) &&
-        this.pinValid(this.currentStrip.sclkPin) &&
-        this.ledsValid(this.currentStrip.numLeds);
-      return res;
-    },
-    ...mapGetters({
-      storeSelectedStrip: "selectedStrip",
-    }),
-  },
-  methods: {
-    /** save an entry, will do an update if id is set, create otherwise */
-    saveEntry() {
-      let obj = new StoreStrip(
-        this.currentStrip.name,
-        this.currentStrip.description,
-        this.currentStrip.misoPin,
-        this.currentStrip.sclkPin,
-        this.currentStrip.numLeds,
-        this.currentStrip.speedHz,
-        this.currentStrip.id
-      );
-      if (typeof this.currentStrip.id !== "undefined") {
-        ApiManager.updateLedStrip(this, obj);
-      } else {
-        ApiManager.createLedStrip(this, obj);
-      }
-    },
-    textValid(value) {
-      return value.length > 0 ? true : false;
-    },
-    pinValid(pin) {
-      let currentPin = parseInt(pin, 10);
-      return currentPin >= 0 && currentPin <= 27 ? true : false;
-    },
-    ledsValid(leds) {
-      return parseInt(leds, 10) > 0 ? true : false;
-    },
-  },
 };
 </script>

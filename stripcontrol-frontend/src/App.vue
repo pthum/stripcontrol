@@ -9,7 +9,7 @@
         </q-tabs>
         <q-space></q-space>
         <q-btn color="light_mode" icon="sync" @click="refresh()"></q-btn>
-        <q-btn icon="light_mode" @click="toggleLight()"></q-btn>
+        <q-btn icon="light_mode" @click="$q.dark.toggle()"></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -19,27 +19,10 @@
   </q-layout>
 </template>
 
-<script>
-import { ref } from "vue";
+<script setup>
 import ApiManager from "@/api/manager";
-export default {
-  name: "LayoutDefault",
-
-  components: {},
-
-  setup() {
-    return {
-      leftDrawerOpen: ref(false),
-    };
-  },
-  methods: {
-    refresh() {
-      ApiManager.callGetColorProfiles(this);
-      ApiManager.callGetLedStrips(this);
-    },
-    toggleLight() {
-      this.$q.dark.toggle();
-    },
-  },
-};
+function refresh() {
+  ApiManager.callGetColorProfiles(this);
+  ApiManager.callGetLedStrips(this);
+}
 </script>

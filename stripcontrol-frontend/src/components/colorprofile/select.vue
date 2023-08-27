@@ -49,91 +49,86 @@
   </q-btn-dropdown>
 </template>
 
-<script>
+<script setup>
 import colorhelper from "@/utils/colorhelper";
 import EventBus from "@/utils/eventbus";
-import { mapGetters } from "vuex";
 import { EventType } from "@/utils/constant-config";
+import { ref, computed, defineProps, onMounted, onBeforeUnmount } from "vue";
+import { useStore } from "vuex";
 
+const props = defineProps({
+  selectId: Number,
+  preselected: Number,
+  addNew: Boolean,
+});
+
+const store = useStore();
+const id = ref(props.preselected ? props.preselected : -1);
+const menuState = ref(false);
+
+const addNewOption = computed(() => props.addNew === true);
+const storedBackendProfiles = computed(() => store.getters.backendProfiles);
+const selected = computed(() => store.getters.getColorProfileById(id.value));
+
+const stringSelected = computed(() => {
+  if (id.value === null) {
+    return "New Profile";
+  } else if (
+    typeof selected.value === "undefined" ||
+    typeof selected.value.id === "undefined"
+  ) {
+    return "Select Profile";
+  }
+  let brightness =
+    typeof selected.value.brightness !== "undefined"
+      ? selected.value.brightness
+      : 0;
+  return (
+    getHexColor(selected.value) +
+    ", \u2600:" +
+    brightness +
+    ` (id: ${selected.value.id})`
+  );
+});
+
+function handleSelection(profile) {
+  id.value = profile.id;
+  menuState.value = false;
+  EventBus.$emit(EventType.CP_SELECT, {
+    object: profile,
+    stripId: props.selectId,
+    type: "selectProfile",
+  });
+}
+function handleSelectNew() {
+  id.value = null;
+  EventBus.$emit(EventType.CP_SELECT, { type: "selectProfile" });
+}
+
+function getHexColor(profile) {
+  return colorhelper.rgbToHex(profile);
+}
+function handleCPCreate(event) {
+  if (
+    event !== "undefined" &&
+    event.object !== "undefined" &&
+    event.object.id !== "undefined"
+  ) {
+    id.value = event.object.id;
+  }
+}
+onMounted(() => {
+  EventBus.$on(EventType.CP_CREATE, handleCPCreate);
+});
+onBeforeUnmount(() => {
+  EventBus.$off(EventType.CP_CREATE, handleCPCreate);
+});
+</script>
+<script>
 export default {
   name: "colorprofile-select",
-  props: ["selectId", "preselected", "addNew"],
-  created() {
-    this.id = this.preselected;
-  },
-  data() {
-    return {
-      id: -1,
-      menuState: false,
-    };
-  },
-  computed: {
-    addNewOption() {
-      return this.addNew === true;
-    },
-    selected() {
-      return this.getColorProfileById(this.id);
-    },
-    stringSelected() {
-      if (this.id === null) {
-        return "New Profile";
-      } else if (
-        typeof this.selected === "undefined" ||
-        typeof this.selected.id === "undefined"
-      ) {
-        return "Select Profile";
-      }
-      let brightness =
-        typeof this.selected.brightness !== "undefined"
-          ? this.selected.brightness
-          : 0;
-      return (
-        this.getHexColor(this.selected) +
-        ", \u2600:" +
-        brightness +
-        ` (id: ${this.selected.id})`
-      );
-    },
-    ...mapGetters({
-      storedBackendProfiles: "backendProfiles",
-      getColorProfileById: "getColorProfileById",
-    }),
-  },
-  methods: {
-    handleSelection(profile) {
-      this.id = profile.id;
-      EventBus.$emit(EventType.CP_SELECT, {
-        object: profile,
-        stripId: this.selectId,
-        type: "selectProfile",
-      });
-    },
-    handleSelectNew() {
-      this.id = null;
-      EventBus.$emit(EventType.CP_SELECT, { type: "selectProfile" });
-    },
-    getHexColor(profile) {
-      return colorhelper.rgbToHex(profile);
-    },
-    handleCPCreate(event) {
-      if (
-        event !== "undefined" &&
-        event.object !== "undefined" &&
-        event.object.id !== "undefined"
-      ) {
-        this.id = event.object.id;
-      }
-    },
-  },
-  mounted() {
-    EventBus.$on(EventType.CP_CREATE, this.handleCPCreate);
-  },
-  beforeUnmount() {
-    EventBus.$off(EventType.CP_CREATE, this.handleCPCreate);
-  },
 };
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .foo {
