@@ -54,7 +54,7 @@ function submitStripForm() {
 }
 /** Fetches strips when the component is created. */
 function callGetLedStrips() {
-  ApiManager.callGetLedStrips(this);
+  ApiManager.callGetLedStrips();
 }
 function toggle(isCreate) {
   if (isCreate) {
@@ -69,21 +69,21 @@ function deleteEntry() {
     id: storeSelectedStrip.value.id,
     name: storeSelectedStrip.value.name,
   };
-  ApiManager.deleteLedStrip(this, obj);
+  ApiManager.deleteLedStrip(obj);
 }
 /** set the created object as selected strip, update the led strips, inform user  */
 function handleLSSave(event) {
   updateStoreStrip(event.object);
   toggle(false);
   updateLedStripInBackendList(event.object);
-  EventBus.makeToast(this, event);
+  EventBus.makeToast(event);
 }
 /** reset the selected strip, update the led strips, inform user */
 function handleLSDelete(event) {
   resetStoreStrip();
   removeLedStripInBackendList(event.object);
   toggle(true);
-  EventBus.makeToast(this, event);
+  EventBus.makeToast(event);
 }
 function handleLSSelect(event) {
   if (typeof event.object === "undefined") {

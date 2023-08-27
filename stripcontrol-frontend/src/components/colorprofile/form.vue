@@ -1,7 +1,7 @@
 <template>
   <div class="color-profile">
     <div class="q-pa-md">
-      <q-form @submit="saveEntry" class="q-gutter-md">
+      <q-form @submit="saveEntry" class="q-gutter-md" ref="profilecreateform">
         <div class="row">
           <div class="col">
             <q-item>
@@ -52,20 +52,6 @@
             </q-card>
           </div>
         </div>
-        <div class="row">
-          <div class="col centered">
-            <q-btn
-              color="secondary"
-              type="submit"
-              v-if="typeof currentProfile.id !== 'undefined'"
-              icon="edit"
-              >Edit {{ currentProfile.id }}</q-btn
-            >
-            <q-btn color="secondary" type="submit" v-else icon="add"
-              >Create</q-btn
-            >
-          </div>
-        </div>
       </q-form>
     </div>
   </div>
@@ -75,22 +61,46 @@
 import ApiManager from "@/api/manager";
 import colorhelper from "@/utils/colorhelper";
 import { StoreProfile } from "@/models/storeprofile";
-import { computed, defineProps } from "vue";
+import {
+  computed,
+  defineProps,
+  defineEmits,
+  defineExpose,
+  ref,
+  watch,
+} from "vue";
 import { useStore } from "vuex";
 const props = defineProps({
   formProfileName: Number,
+  formValid: Boolean,
+});
+
+const emit = defineEmits(["update:formValid"]);
+const profilecreateform = ref(null);
+defineExpose({
+  profilecreateform,
 });
 const store = useStore();
 const currentProfile = computed(() =>
   store.getters.findColorProfile(props.formProfileName)
 );
+
+watch(
+  currentProfile,
+  (newVal, oldVal) => {
+    console.log("selected profile mutated");
+    let res = true;
+    emit("update:formValid", res);
+  },
+  { deep: true }
+);
+
 const color = computed({
   get() {
     return colorhelper.rgbToHex(currentProfile.value);
   },
   set(value) {
     let result = colorhelper.hexToRgb(value);
-
     let obj = new StoreProfile(
       result.r,
       result.g,
@@ -116,9 +126,9 @@ function saveEntry() {
     currentProfile.value.id
   );
   if (typeof currentProfile.value.id !== "undefined") {
-    ApiManager.updateColorProfile(this, obj);
+    ApiManager.updateColorProfile(obj);
   } else {
-    ApiManager.createColorProfile(this, obj);
+    ApiManager.createColorProfile(obj);
   }
 }
 </script>

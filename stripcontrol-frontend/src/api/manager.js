@@ -5,7 +5,7 @@ import { store } from "@/store";
 
 export default {
   /** create an entry */
-  createLedStrip(vm, obj) {
+  createLedStrip(obj) {
     api
       .postLedStrip(obj)
       .then((response) => {
@@ -19,11 +19,11 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** update an entry */
-  updateLedStrip(vm, obj) {
+  updateLedStrip(obj) {
     api
       .putLedStrip(obj)
       .then(() => {
@@ -34,11 +34,11 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** delete an entry */
-  deleteLedStrip(vm, obj) {
+  deleteLedStrip(obj) {
     api
       .deleteLedStrip(obj)
       .then(() => {
@@ -49,10 +49,10 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
-  callGetLedStrips(vm) {
+  callGetLedStrips() {
     api
       .getLedStrips()
       .then((response) => {
@@ -64,21 +64,21 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
-  updateStripProfile(vm, obj) {
+  updateStripProfile(obj) {
     api
       .updateStripProfile(obj)
       .then(() => {
         store.commit("updateLedStripForProfile", obj);
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** Fetches profiles when the component is created. */
-  callGetColorProfiles(vm) {
+  callGetColorProfiles() {
     api
       .getColorProfiles()
       .then((response) => {
@@ -90,10 +90,10 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
-  createColorProfile(vm, obj) {
+  createColorProfile(obj) {
     api
       .postColorProfile(obj)
       .then((response) => {
@@ -107,11 +107,11 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** update an entry */
-  updateColorProfile(vm, obj) {
+  updateColorProfile(obj) {
     api
       .putColorProfile(obj)
       .then(() => {
@@ -122,11 +122,11 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** delete an entry */
-  deleteColorProfile(vm, obj) {
+  deleteColorProfile(obj) {
     api
       .deleteColorProfile(obj)
       .then(() => {
@@ -137,7 +137,7 @@ export default {
         });
       })
       .catch((error) => {
-        this.handleError(vm, error);
+        this.handleError(error);
       });
   },
   /** handle success message, expects object with text field and optionally an object field */
@@ -150,8 +150,8 @@ export default {
     });
   },
   /** handle error message */
-  handleError(vm, error) {
-    EventBus.makeToast(vm, {
+  handleError(error) {
+    EventBus.makeToast({
       type: "negative",
       message: error.message,
       position: "top-right",

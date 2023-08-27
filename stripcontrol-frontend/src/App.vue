@@ -22,7 +22,7 @@
 <script setup>
 import ApiManager from "@/api/manager";
 function refresh() {
-  ApiManager.callGetColorProfiles(this);
-  ApiManager.callGetLedStrips(this);
+  ApiManager.callGetColorProfiles();
+  ApiManager.callGetLedStrips();
 }
 </script>

@@ -13,12 +13,26 @@
               :deleteEntryFn="deleteEntry"
               :isBtnActive="storeSelectedProfile.id"
             />
+            <q-btn
+              @click="submitProfileForm()"
+              align="right"
+              :color="fValid ? 'secondary' : 'primary'"
+              :icon="storeSelectedProfile.id ? 'edit' : 'add'"
+              size="lg"
+              flat
+              :disabled="!fValid"
+            ></q-btn>
           </q-btn-group>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <colorprofileform formProfileName="selectedProfile" />
+          <colorprofileform
+            ref="profileformcomponent"
+            formProfileName="selectedProfile"
+            :formValid="fValid"
+            @update:formValid="(newValue) => (fValid = newValue)"
+          />
         </div>
       </div>
     </div>
@@ -31,19 +45,25 @@ import colorprofileselect from "@/components/colorprofile/select";
 import RemoveModal from "@/components/removeModal";
 import EventBus from "@/utils/eventbus";
 import { EventType } from "@/utils/constant-config";
-import { computed, onMounted, onBeforeUnmount } from "vue";
+import { computed, onMounted, onBeforeUnmount, ref } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
+const profileformcomponent = ref(null);
+const fValid = ref(false);
+function submitProfileForm() {
+  profileformcomponent.value.profilecreateform.submit();
+}
+
 const storeSelectedProfile = computed(() => store.getters.selectedProfile);
 
 function callGetColorProfiles() {
-  ApiManager.callGetColorProfiles(this);
+  ApiManager.callGetColorProfiles();
 }
 /** delete an entry */
 function deleteEntry() {
   let obj = { id: storeSelectedProfile.value.id };
-  ApiManager.deleteColorProfile(this, obj);
+  ApiManager.deleteColorProfile(obj);
 }
 function toggle(isCreate) {
   if (isCreate) {
@@ -57,14 +77,14 @@ function handleCPSave(event) {
   updateStoreProfile(event.object);
   updateColorProfileInBackendList(event.object);
   toggle(false);
-  EventBus.makeToast(this, event);
+  EventBus.makeToast(event);
 }
 /** reset the selected profile, update the colorprofiles, inform user */
 function handleCPDelete(event) {
   resetStoreProfile();
   removeColorProfileInBackendList(event.object);
   toggle(true);
-  EventBus.makeToast(this, event);
+  EventBus.makeToast(event);
 }
 function handleCPSelect(event) {
   if (typeof event.object === "undefined") {

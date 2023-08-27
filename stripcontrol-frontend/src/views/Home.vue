@@ -55,17 +55,17 @@ const store = useStore();
 const storedBackendStrips = computed(() => store.getters.backendStrips);
 
 function refresh() {
-  ApiManager.callGetColorProfiles(this);
-  ApiManager.callGetLedStrips(this);
+  ApiManager.callGetColorProfiles();
+  ApiManager.callGetLedStrips();
 }
 /** enable/disable strip */
 function toggleEnabled(strip) {
   strip.enabled = !strip.enabled;
-  ApiManager.updateLedStrip(this, strip);
+  ApiManager.updateLedStrip(strip);
 }
 /** handle selection of a color profile */
 function handleCPSelect(event) {
-  ApiManager.updateStripProfile(this, {
+  ApiManager.updateStripProfile({
     stripId: event.stripId,
     profile: event.object,
   });

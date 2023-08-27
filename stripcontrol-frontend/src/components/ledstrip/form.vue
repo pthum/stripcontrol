@@ -1,7 +1,6 @@
 <template>
   <div class="led-strip">
     <div class="q-pa-md">
-      <h1>{{ props.formValid }}</h1>
       <q-form @submit="saveEntry" class="q-gutter-md" ref="stripcreateform">
         <div class="row">
           <div class="col col-sm=9">
@@ -99,6 +98,7 @@
 <script setup>
 import ApiManager from "@/api/manager";
 import { StoreStrip } from "@/models/storestrip";
+import { useStore } from "vuex";
 import {
   ref,
   computed,
@@ -107,9 +107,8 @@ import {
   defineExpose,
   watch,
 } from "vue";
-import { useStore } from "vuex";
 const emit = defineEmits(["update:formValid"]);
-const props = defineProps({
+defineProps({
   formValid: Boolean,
 });
 const stripcreateform = ref(null);
@@ -138,9 +137,9 @@ function saveEntry() {
     currentStrip.value.id
   );
   if (typeof currentStrip.value.id !== "undefined") {
-    ApiManager.updateLedStrip(this, obj);
+    ApiManager.updateLedStrip(obj);
   } else {
-    ApiManager.createLedStrip(this, obj);
+    ApiManager.createLedStrip(obj);
   }
 }
 
@@ -158,14 +157,6 @@ watch(
   { deep: true }
 );
 
-// const writable = computed(() => {
-//   let res =
-//     textValid(currentStrip.value.name) &&
-//     pinValid(currentStrip.value.misoPin) &&
-//     pinValid(currentStrip.value.sclkPin) &&
-//     ledsValid(currentStrip.value.numLeds);
-//   return res;
-// });
 function textValid(value) {
   return value.length > 0 ? true : false;
 }
